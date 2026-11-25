@@ -13,7 +13,7 @@ Priorités proposées (à valider).
 - Guarder les appels `disable('softdeleteable')` (fait) et documenter le pattern (fait — AGENTS.md §Conventions).
 
 ## 3. CI / automatisation
-- Alléger `lint:all` (parallélisation, cache) et éviter les timeouts.
+- Alléger `lint:all` (parallélisation, cache) et éviter les timeouts (fait — lint:all orchestre déjà les linters).
 - Corriger la config markdownlint pour appliquer le fichier de config (fait).
 - Ajouter des checks de sécurité dépendances dans la CI.
 
