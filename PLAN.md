@@ -8,7 +8,7 @@ Priorités proposées (à valider).
 - Ajouter des commandes `task` pour lancer un sous-ensemble de tests rapidement (fait — test:unit/integration/functional/performance/quick).
 
 ## 2. Qualité de code
-- Stabiliser Rector (paramètres compatibles avec la version installée).
+- Stabiliser Rector (paramètres compatibles avec la version installée) (fait — rector:dry OK, 23 fichiers).
 - Augmenter progressivement le niveau PHPStan (0 -> 5 -> 8) avec baseline.
 - Guarder les appels `disable('softdeleteable')` (fait) et documenter le pattern.
 
