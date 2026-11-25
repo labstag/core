@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace Labstag\Tests\Unit\Service;
 
+use stdClass;
+use Labstag\Repository\PageRepository;
 use InvalidArgumentException;
 use Labstag\Data\DataInterface;
 use Labstag\Service\SlugService;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
-use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 final class SlugServiceTest extends TestCase
@@ -21,17 +21,11 @@ final class SlugServiceTest extends TestCase
 
     private SlugService $slugService;
 
-    protected function setUp(): void
-    {
-        $this->requestStack = new RequestStack();
-        $this->slugService = new SlugService([], $this->createMock(\Labstag\Repository\PageRepository::class), $this->requestStack);
-    }
-
     #[Test]
     #[Group('unit')]
     public function forEntityThrowsOnUnsupported(): void
     {
-        $entity = new \stdClass();
+        $entity = new stdClass();
         $this->expectException(InvalidArgumentException::class);
         $this->slugService->forEntity($entity);
     }
@@ -42,9 +36,21 @@ final class SlugServiceTest extends TestCase
     {
         $data = $this->createMock(DataInterface::class);
         $data->method('supportsData')->willReturn(true);
-        $data->method('generateSlug')->willReturn(['slug' => 'foo']);
-        $service = new SlugService([$data], $this->createMock(\Labstag\Repository\PageRepository::class), $this->requestStack);
-        $this->assertSame(['slug' => 'foo'], $service->forEntity(new \stdClass()));
+        $data->method('generateSlug')->willReturn(
+            ['slug' => 'foo']
+        );
+        $service = new SlugService([$data], $this->createStub(PageRepository::class), $this->requestStack);
+        $this->assertSame(
+            ['slug' => 'foo'],
+            $service->forEntity(new stdClass())
+        );
+    }
+
+    #[Test]
+    #[Group('unit')]
+    public function getEntityBySlugNoMatch(): void
+    {
+        $this->assertNull($this->slugService->getEntityBySlug('nope'));
     }
 
     #[Test]
@@ -54,10 +60,9 @@ final class SlugServiceTest extends TestCase
         $this->assertNull($this->slugService->getEntityBySlug(null));
     }
 
-    #[Test]
-    #[Group('unit')]
-    public function getEntityBySlugNoMatch(): void
+    protected function setUp(): void
     {
-        $this->assertNull($this->slugService->getEntityBySlug('nope'));
+        $this->requestStack = new RequestStack();
+        $this->slugService  = new SlugService([], $this->createStub(PageRepository::class), $this->requestStack);
     }
 }

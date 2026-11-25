@@ -32,7 +32,7 @@ class WorkflowService
     {
         $object = $this->getEntity($entity, $uid);
 
-        if (!$this->workflowRegistry->has($object)) {
+        if (null === $object || !$this->workflowRegistry->has($object)) {
             return;
         }
 

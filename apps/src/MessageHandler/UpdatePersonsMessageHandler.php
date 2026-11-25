@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Labstag\MessageHandler;
 
-use Labstag\Entity\Person;
+use DateTimeImmutable;
 use Labstag\Message\PersonMessage;
 use Labstag\Message\UpdatePersonsMessage;
 use Labstag\Repository\PersonRepository;
@@ -17,13 +17,14 @@ final class UpdatePersonsMessageHandler
     public function __construct(
         private MessageDispatcherService $messageDispatcherService,
         private PersonRepository $personRepository,
-    ) {
+    )
+    {
     }
 
     public function __invoke(UpdatePersonsMessage $updatePersonsMessage): void
     {
         unset($updatePersonsMessage);
-        $threshold = new \DateTimeImmutable('-7 days');
+        $threshold = new DateTimeImmutable('-7 days');
         $persons   = $this->personRepository->findToUpdate($threshold);
         foreach ($persons as $person) {
             $this->messageDispatcherService->dispatch(new PersonMessage($person->getId()));

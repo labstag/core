@@ -19,10 +19,13 @@ final class ConfigurationServiceTest extends TestCase
 
     private ConfigurationService $service;
 
-    protected function setUp(): void
+    #[Test]
+    #[Group('unit')]
+    public function getConfigurationReturnsFirst(): void
     {
-        $this->repository = $this->createMock(ConfigurationRepository::class);
-        $this->service = new ConfigurationService($this->repository);
+        $config = $this->createStub(Configuration::class);
+        $this->repository->method('findAll')->willReturn([$config]);
+        $this->assertSame($config, $this->service->getConfiguration());
     }
 
     #[Test]
@@ -31,15 +34,6 @@ final class ConfigurationServiceTest extends TestCase
     {
         $this->repository->method('findAll')->willReturn([]);
         $this->assertNull($this->service->getConfiguration());
-    }
-
-    #[Test]
-    #[Group('unit')]
-    public function getConfigurationReturnsFirst(): void
-    {
-        $config = $this->createMock(Configuration::class);
-        $this->repository->method('findAll')->willReturn([$config]);
-        $this->assertSame($config, $this->service->getConfiguration());
     }
 
     #[Test]
@@ -66,8 +60,14 @@ final class ConfigurationServiceTest extends TestCase
     #[Group('unit')]
     public function saveDelegates(): void
     {
-        $config = $this->createMock(Configuration::class);
+        $config = $this->createStub(Configuration::class);
         $this->repository->expects($this->once())->method('save')->with($config);
         $this->service->save($config);
+    }
+
+    protected function setUp(): void
+    {
+        $this->repository = $this->createMock(ConfigurationRepository::class);
+        $this->service    = new ConfigurationService($this->repository);
     }
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Labstag\Service\Imdb\Movie;
 
+use DateTime;
 use Labstag\Entity\Movie;
 use Labstag\Service\VideoService;
 
@@ -67,7 +68,7 @@ class DetailService
         }
 
         if (isset($details['tmdb']['release_date']) && '' !== $details['tmdb']['release_date']) {
-            $movie->setReleaseDate(new \DateTime($details['tmdb']['release_date']));
+            $movie->setReleaseDate(new DateTime($details['tmdb']['release_date']));
         }
 
         $movie->setTmdb((string) $details['tmdb']['id']);

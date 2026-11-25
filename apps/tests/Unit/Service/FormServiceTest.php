@@ -11,7 +11,6 @@ use PHPUnit\Framework\TestCase;
 
 final class FormServiceTest extends TestCase
 {
-
     #[Test]
     #[Group('unit')]
     public function allEmpty(): void

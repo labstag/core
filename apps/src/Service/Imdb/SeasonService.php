@@ -19,13 +19,12 @@ class SeasonService
 {
     public function __construct(
         private FileStorageService $fileStorageService,
-    private FileUploadService $fileUploadService,
+        private FileUploadService $fileUploadService,
         private MessageDispatcherService $messageDispatcherService,
         private SeasonRepository $seasonRepository,
         private EntityManagerInterface $entityManager,
         private EpisodeService $episodeService,
         private TheMovieDbApi $theMovieDbApi,
-        private PersonService $personService,
     )
     {
     }
@@ -127,7 +126,7 @@ class SeasonService
             $this->updateSeason($season, $details),
             $this->updateImagePoster($season, $details),
             $this->updateImageBackdrop($season),
-            $this->updateCredits($season, $details),
+            $this->updateCredits(),
             $this->updateEpisodes($season, $details),
         ];
 
@@ -158,7 +157,7 @@ class SeasonService
         }
     }
 
-    private function updateCredits(Season $season, array $details): bool
+    private function updateCredits(): bool
     {
         return true;
     }

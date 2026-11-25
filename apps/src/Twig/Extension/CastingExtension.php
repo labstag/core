@@ -18,7 +18,6 @@ class CastingExtension extends AbstractExtension
             new TwigFunction('casting_cast', [CastingExtensionRuntime::class, 'cast']),
             new TwigFunction('casting_crew', [CastingExtensionRuntime::class, 'crew']),
 
-
             new TwigFunction('casting_acting', [CastingExtensionRuntime::class, 'acting']),
             new TwigFunction('casting_series', [CastingExtensionRuntime::class, 'series']),
             new TwigFunction('casting_episodes', [CastingExtensionRuntime::class, 'episodes']),

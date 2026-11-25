@@ -6,8 +6,8 @@ namespace Labstag\Tests\Unit\Service;
 
 use Exception;
 use Labstag\Service\CacheService;
-use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;

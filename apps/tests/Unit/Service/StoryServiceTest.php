@@ -14,13 +14,14 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class StoryServiceTest extends TestCase
 {
-    private function makeService(?TranslatorInterface $translator = null): StoryService
+    #[Test]
+    #[Group('unit')]
+    public function generateFlashBagUsesTranslator(): void
     {
-        return new StoryService(
-            $this->createMock(CacheService::class),
-            $this->createMock(FileService::class),
-            $translator ?? $this->createMock(TranslatorInterface::class),
-        );
+        $translator = $this->createMock(TranslatorInterface::class);
+        $translator->method('trans')->willReturn('msg');
+        $service = $this->makeService($translator);
+        $this->assertSame('msg', $service->generateFlashBag());
     }
 
     #[Test]
@@ -31,13 +32,12 @@ final class StoryServiceTest extends TestCase
         $this->assertSame([], $service->getUpdates());
     }
 
-    #[Test]
-    #[Group('unit')]
-    public function generateFlashBagUsesTranslator(): void
+    private function makeService(?TranslatorInterface $translator = null): StoryService
     {
-        $translator = $this->createMock(TranslatorInterface::class);
-        $translator->method('trans')->willReturn('msg');
-        $service = $this->makeService($translator);
-        $this->assertSame('msg', $service->generateFlashBag());
+        return new StoryService(
+            $this->createStub(CacheService::class),
+            $this->createStub(FileService::class),
+            $translator ?? $this->createMock(TranslatorInterface::class),
+        );
     }
 }

@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Labstag\Service\Igdb\Game;
 
-use Labstag\Api\LibreTranslationApi;
-use Labstag\Entity\Game;
-use Labstag\Entity\Franchise;
-use Labstag\Api\IgdbApi;
 use Doctrine\ORM\EntityManagerInterface;
+use Labstag\Api\IgdbApi;
+use Labstag\Api\LibreTranslationApi;
+use Labstag\Entity\Franchise;
+use Labstag\Entity\Game;
 use Labstag\Entity\GameCategory;
 use Labstag\Service\CategoryService;
 use Labstag\Service\FileService;

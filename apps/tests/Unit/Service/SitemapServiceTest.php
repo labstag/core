@@ -5,7 +5,8 @@ declare(strict_types=1);
 namespace Labstag\Tests\Unit\Service;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
+use Labstag\Entity\Configuration;
+use Labstag\Repository\PostRepository;
 use Labstag\Service\ConfigurationService;
 use Labstag\Service\SitemapService;
 use Labstag\Service\SlugService;
@@ -20,25 +21,25 @@ final class SitemapServiceTest extends TestCase
     #[Group('unit')]
     public function getDataReturnsArray(): void
     {
-        $config = $this->createMock(ConfigurationService::class);
-        $config->method('getConfiguration')->willReturn(new class {
-            public function isSitemapPosts(): bool { return false; }
-            public function isSitemapStory(): bool { return false; }
-        });
+        $config        = $this->createMock(ConfigurationService::class);
+        $configuration = $this->createMock(Configuration::class);
+        $configuration->method('isSitemapPosts')->willReturn(false);
+        $configuration->method('isSitemapStory')->willReturn(false);
+        $config->method('getConfiguration')->willReturn($configuration);
 
         $slug = $this->createMock(SlugService::class);
         $slug->method('getPageByType')->willReturn(null);
 
-        $urlGen = $this->createMock(UrlGeneratorInterface::class);
+        $urlGen = $this->createStub(UrlGeneratorInterface::class);
 
-        $repo = $this->createMock(EntityRepository::class);
+        $repo = $this->createMock(PostRepository::class);
         $repo->method('getAllActivate')->willReturn([]);
 
         $em = $this->createMock(EntityManagerInterface::class);
         $em->method('getRepository')->willReturn($repo);
 
         $service = new SitemapService($config, $slug, $urlGen, $em);
-        $result = $service->getData(false);
+        $result  = $service->getData(false);
         $this->assertIsArray($result);
     }
 }

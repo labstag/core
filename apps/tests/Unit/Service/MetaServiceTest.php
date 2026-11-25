@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Labstag\Tests\Unit\Service;
 
+use stdClass;
 use Doctrine\ORM\EntityManagerInterface;
-use Labstag\Entity\Meta;
 use Labstag\Service\FileService;
 use Labstag\Service\MetaService;
 use Labstag\Service\SiteService;
@@ -23,29 +23,13 @@ final class MetaServiceTest extends TestCase
     {
         $service = new MetaService(
             [],
-            $this->createMock(Environment::class),
-            $this->createMock(EntityManagerInterface::class),
-            $this->createMock(ViewResolverService::class),
-            $this->createMock(FileService::class),
-            $this->createMock(SiteService::class),
+            $this->createStub(Environment::class),
+            $this->createStub(EntityManagerInterface::class),
+            $this->createStub(ViewResolverService::class),
+            $this->createStub(FileService::class),
+            $this->createStub(SiteService::class),
         );
         $this->assertNull($service->getEntityParent(null));
-    }
-
-    #[Test]
-    #[Group('unit')]
-    public function getJsonLdReturnsEmptyWhenNoDatas(): void
-    {
-        $service = new MetaService(
-            [],
-            $this->createMock(Environment::class),
-            $this->createMock(EntityManagerInterface::class),
-            $this->createMock(ViewResolverService::class),
-            $this->createMock(FileService::class),
-            $this->createMock(SiteService::class),
-        );
-        $entity = new \stdClass();
-        $this->assertSame('', $service->getJsonLd($entity));
     }
 
     #[Test]
@@ -57,13 +41,29 @@ final class MetaServiceTest extends TestCase
 
         $service = new MetaService(
             [],
-            $this->createMock(Environment::class),
-            $this->createMock(EntityManagerInterface::class),
-            $this->createMock(ViewResolverService::class),
-            $this->createMock(FileService::class),
+            $this->createStub(Environment::class),
+            $this->createStub(EntityManagerInterface::class),
+            $this->createStub(ViewResolverService::class),
+            $this->createStub(FileService::class),
             $site,
         );
-        $entity = new \stdClass();
+        $entity = new stdClass();
         $this->assertNull($service->getImageForMetatags($entity));
+    }
+
+    #[Test]
+    #[Group('unit')]
+    public function getJsonLdReturnsEmptyWhenNoDatas(): void
+    {
+        $service = new MetaService(
+            [],
+            $this->createStub(Environment::class),
+            $this->createStub(EntityManagerInterface::class),
+            $this->createStub(ViewResolverService::class),
+            $this->createStub(FileService::class),
+            $this->createStub(SiteService::class),
+        );
+        $entity = new stdClass();
+        $this->assertSame('', $service->getJsonLd($entity));
     }
 }

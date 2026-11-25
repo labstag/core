@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Labstag\Tests\Functional\Controller;
 
+use Symfony\Component\HttpFoundation\Response;
 use Labstag\Tests\AbstractWebTestCase;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
@@ -18,7 +19,7 @@ final class AdditionalRoutesTest extends AbstractWebTestCase
     {
         $this->client()->request(Request::METHOD_GET, '/login');
         $response = $this->client()->getResponse();
-        $this->assertTrue($response->isSuccessful() || $response->isRedirection() || $response->getStatusCode() === 404);
+        $this->assertTrue($response->isSuccessful() || $response->isRedirection() || Response::HTTP_NOT_FOUND === $response->getStatusCode());
     }
 
     #[Test]
@@ -28,6 +29,6 @@ final class AdditionalRoutesTest extends AbstractWebTestCase
     {
         $this->client()->request(Request::METHOD_GET, '/sitemap.xml');
         $response = $this->client()->getResponse();
-        $this->assertTrue($response->isSuccessful() || $response->isRedirection() || $response->getStatusCode() === 404);
+        $this->assertTrue($response->isSuccessful() || $response->isRedirection() || Response::HTTP_NOT_FOUND === $response->getStatusCode());
     }
 }

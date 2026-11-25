@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Labstag\Tests\Unit\Service;
 
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 use Labstag\Entity\Category;
 use Labstag\Repository\CategoryRepository;
 use Labstag\Service\CategoryService;
@@ -15,17 +17,18 @@ use PHPUnit\Framework\TestCase;
 final class CategoryServiceTest extends TestCase
 {
 
+    private EntityManagerInterface&MockObject $em;
+
     private CategoryRepository&MockObject $repository;
 
     private CategoryService $service;
 
-    private \Doctrine\ORM\EntityManagerInterface&MockObject $em;
-
-    protected function setUp(): void
+    #[Test]
+    #[Group('unit')]
+    public function getCategoryMovieForFormEmpty(): void
     {
-        $this->repository = $this->createMock(CategoryRepository::class);
-        $this->em = $this->createMock(\Doctrine\ORM\EntityManagerInterface::class);
-        $this->service = new CategoryService($this->em, $this->repository);
+        $this->repository->method('findAllByTypeMovieEnable')->willReturn([]);
+        $this->assertSame([], $this->service->getCategoryMovieForForm());
     }
 
     #[Test]
@@ -34,17 +37,16 @@ final class CategoryServiceTest extends TestCase
     {
         $cat = $this->createMock(Category::class);
         $cat->method('getTitle')->willReturn('Foo');
-        $repo = $this->createMock(\Doctrine\ORM\EntityRepository::class);
+        $repo = $this->createMock(EntityRepository::class);
         $repo->method('findAll')->willReturn([$cat]);
         $this->em->method('getRepository')->willReturn($repo);
         $this->assertSame($cat, $this->service->getType('Foo', Category::class));
     }
 
-    #[Test]
-    #[Group('unit')]
-    public function getCategoryMovieForFormEmpty(): void
+    protected function setUp(): void
     {
-        $this->repository->method('findAllByTypeMovieEnable')->willReturn([]);
-        $this->assertSame([], $this->service->getCategoryMovieForForm());
+        $this->repository = $this->createMock(CategoryRepository::class);
+        $this->em         = $this->createMock(EntityManagerInterface::class);
+        $this->service    = new CategoryService($this->em, $this->repository);
     }
 }

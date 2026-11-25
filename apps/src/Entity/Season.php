@@ -120,8 +120,6 @@ class Season implements Stringable, EntityWithParagraphsInterface
     #[ORM\Column(name: 'vote_average', nullable: true)]
     protected ?float $voteAverage = null;
 
-
-
     public function __construct()
     {
         $this->paragraphs = new ArrayCollection();

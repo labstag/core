@@ -56,7 +56,7 @@ class MovieSlugHandler implements SlugHandlerInterface
 
         $collisions = array_filter(
             $existingMovies,
-            static fn ($m): bool => $m !== $object
+            static fn (object $m): bool => $m !== $object
         );
 
         if ([] === $collisions) {

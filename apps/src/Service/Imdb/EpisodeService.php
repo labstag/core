@@ -130,7 +130,12 @@ class EpisodeService
             }
         }
 
-        $episode->setCasting(['cast' => $cast, 'crew' => $crew]);
+        $episode->setCasting(
+            [
+                'cast' => $cast,
+                'crew' => $crew,
+            ]
+        );
 
         return true;
     }

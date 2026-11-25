@@ -3,8 +3,6 @@
 namespace Labstag\Controller\Admin;
 
 use Doctrine\Persistence\Mapping\ClassMetadata;
-use Labstag\Field\CastField;
-use Labstag\Field\CrewField;
 use Doctrine\Persistence\ObjectManager;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
@@ -18,8 +16,9 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
 use Labstag\Entity\Season;
+use Labstag\Field\CastField;
+use Labstag\Field\CrewField;
 use Labstag\Field\WysiwygField;
-use Labstag\Service\Admin\SeasonActionService;
 use Override;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;

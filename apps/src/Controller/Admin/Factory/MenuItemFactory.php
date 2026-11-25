@@ -21,7 +21,7 @@ use Symfony\Contracts\Translation\TranslatableInterface;
 /**
  * Factory for generating dashboard menu items to reduce duplication in DashboardController.
  */
-final class MenuItemFactory
+class MenuItemFactory
 {
     /**
      * @return array<string, CrudMenuItem>

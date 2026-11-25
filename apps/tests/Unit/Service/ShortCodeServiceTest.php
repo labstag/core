@@ -11,7 +11,6 @@ use PHPUnit\Framework\TestCase;
 
 final class ShortCodeServiceTest extends TestCase
 {
-
     #[Test]
     #[Group('unit')]
     public function changeContentNoShortcodes(): void

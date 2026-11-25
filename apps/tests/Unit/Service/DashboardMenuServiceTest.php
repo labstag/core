@@ -14,12 +14,24 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 final class DashboardMenuServiceTest extends TestCase
 {
-    private function makeService(?UrlGeneratorInterface $urlGen = null, ?MenuItemFactory $factory = null): DashboardMenuService
+    #[Test]
+    #[Group('unit')]
+    public function buildContentMenusReturnsIterable(): void
     {
-        return new DashboardMenuService(
-            $factory ?? $this->createMock(MenuItemFactory::class),
-            $urlGen ?? $this->createMock(UrlGeneratorInterface::class),
-        );
+        $factory = $this->createMock(MenuItemFactory::class);
+        $factory->method('createContentSubMenu')->willReturn(MenuItem::subMenu('x'));
+        $service = $this->makeService(null, $factory);
+        $items   = iterator_to_array($service->buildContentMenus([], []));
+        $this->assertNotEmpty($items);
+    }
+
+    #[Test]
+    #[Group('unit')]
+    public function buildSimpleCrudMenusReturnsIterable(): void
+    {
+        $service = $this->makeService();
+        $items   = iterator_to_array($service->buildSimpleCrudMenus());
+        $this->assertNotEmpty($items);
     }
 
     #[Test]
@@ -29,27 +41,15 @@ final class DashboardMenuServiceTest extends TestCase
         $urlGen = $this->createMock(UrlGeneratorInterface::class);
         $urlGen->method('generate')->willReturn('/x');
         $service = $this->makeService($urlGen);
-        $items = iterator_to_array($service->buildUtilityMenus());
+        $items   = iterator_to_array($service->buildUtilityMenus());
         $this->assertNotEmpty($items);
     }
 
-    #[Test]
-    #[Group('unit')]
-    public function buildSimpleCrudMenusReturnsIterable(): void
+    private function makeService(?UrlGeneratorInterface $urlGen = null, ?MenuItemFactory $factory = null): DashboardMenuService
     {
-        $service = $this->makeService();
-        $items = iterator_to_array($service->buildSimpleCrudMenus());
-        $this->assertNotEmpty($items);
-    }
-
-    #[Test]
-    #[Group('unit')]
-    public function buildContentMenusReturnsIterable(): void
-    {
-        $factory = $this->createMock(MenuItemFactory::class);
-        $factory->method('createContentSubMenu')->willReturn(MenuItem::linkToUrl('x', 'y', 'z'));
-        $service = $this->makeService(null, $factory);
-        $items = iterator_to_array($service->buildContentMenus([], []));
-        $this->assertNotEmpty($items);
+        return new DashboardMenuService(
+            $factory ?? $this->createMock(MenuItemFactory::class),
+            $urlGen ?? $this->createMock(UrlGeneratorInterface::class),
+        );
     }
 }

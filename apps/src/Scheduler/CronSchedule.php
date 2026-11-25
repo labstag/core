@@ -4,10 +4,11 @@ namespace Labstag\Scheduler;
 
 use Labstag\Message\BanIpMessage;
 use Labstag\Message\DeleteOldFileMessage;
+use Labstag\Message\MetaAllMessage;
 use Labstag\Message\NotificationMessage;
 use Labstag\Message\UpdatePersonMessage;
-use Labstag\Message\UpdateSerieMessage;
 use Labstag\Message\UpdatePersonsMessage;
+use Labstag\Message\UpdateSerieMessage;
 use Symfony\Component\Scheduler\Attribute\AsSchedule;
 use Symfony\Component\Scheduler\RecurringMessage;
 use Symfony\Component\Scheduler\Schedule;

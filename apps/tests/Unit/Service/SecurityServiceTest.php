@@ -4,6 +4,12 @@ declare(strict_types=1);
 
 namespace Labstag\Tests\Unit\Service;
 
+use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Labstag\Service\FileService;
+use Labstag\Repository\BanIpRepository;
+use Labstag\Repository\RedirectionRepository;
+use Labstag\Repository\HttpErrorLogsRepository;
 use Labstag\Service\SecurityService;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
@@ -11,18 +17,17 @@ use PHPUnit\Framework\TestCase;
 
 final class SecurityServiceTest extends TestCase
 {
-
     #[Test]
     #[Group('unit')]
     public function getCurrentClientIpNoRequest(): void
     {
         $service = new SecurityService(
-            $this->createMock(\Symfony\Bundle\SecurityBundle\Security::class),
-            new \Symfony\Component\HttpFoundation\RequestStack(),
-            $this->createMock(\Labstag\Service\FileService::class),
-            $this->createMock(\Labstag\Repository\BanIpRepository::class),
-            $this->createMock(\Labstag\Repository\RedirectionRepository::class),
-            $this->createMock(\Labstag\Repository\HttpErrorLogsRepository::class),
+            $this->createStub(Security::class),
+            new RequestStack(),
+            $this->createStub(FileService::class),
+            $this->createStub(BanIpRepository::class),
+            $this->createStub(RedirectionRepository::class),
+            $this->createStub(HttpErrorLogsRepository::class),
         );
         $this->assertSame('0.0.0.0', $service->getCurrentClientIp());
     }

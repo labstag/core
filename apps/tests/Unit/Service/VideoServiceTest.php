@@ -18,12 +18,6 @@ final class VideoServiceTest extends TestCase
 
     private VideoService $service;
 
-    protected function setUp(): void
-    {
-        $this->logger = $this->createMock(LoggerInterface::class);
-        $this->service = new VideoService($this->logger);
-    }
-
     #[Test]
     #[Group('unit')]
     public function getTrailerNullWhenNoResults(): void
@@ -33,18 +27,40 @@ final class VideoServiceTest extends TestCase
 
     #[Test]
     #[Group('unit')]
-    public function getTrailerYoutube(): void
+    public function getTrailerUnsupportedLogs(): void
     {
-        $details = ['results' => [['type' => 'Trailer', 'site' => 'YouTube', 'key' => 'abc']]];
-        $this->assertSame('https://www.youtube.com/watch?v=abc', $this->service->getTrailer($details));
+        $details = [
+            'results' => [
+                [
+                    'type' => 'Trailer',
+                    'site' => 'Foo',
+                    'key'  => 'abc',
+                ],
+            ],
+        ];
+        $this->logger->expects($this->exactly(2))->method('warning');
+        $this->assertNull($this->service->getTrailer($details));
     }
 
     #[Test]
     #[Group('unit')]
-    public function getTrailerUnsupportedLogs(): void
+    public function getTrailerYoutube(): void
     {
-        $details = ['results' => [['type' => 'Trailer', 'site' => 'Foo', 'key' => 'abc']]];
-        $this->logger->expects($this->exactly(2))->method('warning');
-        $this->assertNull($this->service->getTrailer($details));
+        $details = [
+            'results' => [
+                [
+                    'type' => 'Trailer',
+                    'site' => 'YouTube',
+                    'key'  => 'abc',
+                ],
+            ],
+        ];
+        $this->assertSame('https://www.youtube.com/watch?v=abc', $this->service->getTrailer($details));
+    }
+
+    protected function setUp(): void
+    {
+        $this->logger  = $this->createMock(LoggerInterface::class);
+        $this->service = new VideoService($this->logger);
     }
 }

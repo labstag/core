@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Labstag\Tests\Functional\Controller;
 
+use Symfony\Component\HttpFoundation\Response;
 use Labstag\Tests\AbstractWebTestCase;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
@@ -25,27 +26,31 @@ final class SecurityControllerTest extends AbstractWebTestCase
     #[Group('functional')]
     #[Group('controller')]
     #[Group('security')]
-    public function loginRouteLoads(): void
+    public function loginPostInvalid(): void
     {
-        $this->client()->request(Request::METHOD_GET, '/login');
+        $this->client()->request(
+            Request::METHOD_POST,
+            '/connexion',
+            [
+                'login' => [
+                    'username' => 'nope@example.com',
+                    'password' => 'wrong',
+                ],
+            ]
+        );
         $response = $this->client()->getResponse();
-        $this->assertTrue($response->isSuccessful() || $response->isRedirection() || $response->getStatusCode() === 404);
+        $this->assertTrue($response->isRedirection() || $response->isSuccessful());
     }
 
     #[Test]
     #[Group('functional')]
     #[Group('controller')]
     #[Group('security')]
-    public function loginPostInvalid(): void
+    public function loginRouteLoads(): void
     {
-        $this->client()->request(Request::METHOD_POST, '/connexion', [
-            'login' => [
-                'username' => 'nope@example.com',
-                'password' => 'wrong',
-            ],
-        ]);
+        $this->client()->request(Request::METHOD_GET, '/login');
         $response = $this->client()->getResponse();
-        $this->assertTrue($response->isRedirection() || $response->isSuccessful());
+        $this->assertTrue($response->isSuccessful() || $response->isRedirection() || Response::HTTP_NOT_FOUND === $response->getStatusCode());
     }
 
     #[Test]
@@ -56,6 +61,6 @@ final class SecurityControllerTest extends AbstractWebTestCase
     {
         $this->client()->request(Request::METHOD_GET, '/logout');
         $response = $this->client()->getResponse();
-        $this->assertTrue($response->isRedirection() || $response->getStatusCode() === 404 || $response->isSuccessful());
+        $this->assertTrue($response->isRedirection() || Response::HTTP_NOT_FOUND === $response->getStatusCode() || $response->isSuccessful());
     }
 }

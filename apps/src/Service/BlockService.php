@@ -3,7 +3,6 @@
 namespace Labstag\Service;
 
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
-use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGeneratorInterface;
 use Labstag\Block\BlockAbstract;
 use Labstag\Controller\Admin\BlockCrudController;
@@ -27,7 +26,7 @@ class BlockService
          */
         #[AutowireIterator('labstag.blocks')]
         private readonly iterable $blocks,
-        private AdminUrlGenerator $adminUrlGenerator,
+        private AdminUrlGeneratorInterface $adminUrlGenerator,
         private Security $security,
         private AuthorizationCheckerInterface $authorizationChecker,
         private BlockRepository $blockRepository,

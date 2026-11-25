@@ -4,8 +4,6 @@ namespace Labstag\Entity;
 
 use DateTime;
 use DateTimeImmutable;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
@@ -94,13 +92,6 @@ class Episode implements Stringable
         return $this->casting;
     }
 
-    public function setCasting(?array $casting): static
-    {
-        $this->casting = $casting;
-
-        return $this;
-    }
-
     public function getId(): ?string
     {
         return $this->id;
@@ -164,6 +155,13 @@ class Episode implements Stringable
     public function setAirDate(?DateTime $airDate): static
     {
         $this->airDate = $airDate;
+
+        return $this;
+    }
+
+    public function setCasting(?array $casting): static
+    {
+        $this->casting = $casting;
 
         return $this;
     }

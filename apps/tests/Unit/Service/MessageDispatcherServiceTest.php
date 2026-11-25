@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Labstag\Tests\Unit\Service;
 
+use stdClass;
 use Labstag\Service\MessageDispatcherService;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
@@ -13,6 +14,7 @@ use Symfony\Component\Messenger\MessageBusInterface;
 
 final class FakeBus implements MessageBusInterface
 {
+
     public int $calls = 0;
 
     public function dispatch(object $message, array $stamps = []): Envelope
@@ -25,26 +27,25 @@ final class FakeBus implements MessageBusInterface
 
 final class MessageDispatcherServiceTest extends TestCase
 {
-
     #[Test]
     #[Group('unit')]
-    public function dispatchCallsBus(): void
+    public function dedupes(): void
     {
-        $bus = new FakeBus();
+        $bus     = new FakeBus();
         $service = new MessageDispatcherService($bus);
-        $service->dispatch(new \stdClass());
+        $msg     = new stdClass();
+        $service->dispatch($msg);
+        $service->dispatch($msg);
         $this->assertSame(1, $bus->calls);
     }
 
     #[Test]
     #[Group('unit')]
-    public function dedupes(): void
+    public function dispatchCallsBus(): void
     {
-        $bus = new FakeBus();
+        $bus     = new FakeBus();
         $service = new MessageDispatcherService($bus);
-        $msg = new \stdClass();
-        $service->dispatch($msg);
-        $service->dispatch($msg);
+        $service->dispatch(new stdClass());
         $this->assertSame(1, $bus->calls);
     }
 
@@ -52,9 +53,9 @@ final class MessageDispatcherServiceTest extends TestCase
     #[Group('unit')]
     public function stats(): void
     {
-        $bus = new FakeBus();
+        $bus     = new FakeBus();
         $service = new MessageDispatcherService($bus);
-        $service->dispatch(new \stdClass());
+        $service->dispatch(new stdClass());
         $this->assertNotEmpty($service->getDispatchStats());
     }
 }

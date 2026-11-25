@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Labstag\Service\Imdb\Movie;
@@ -40,7 +41,12 @@ class CreditService
             }
         }
 
-        $movie->setCasting(['cast' => $cast, 'crew' => $crew]);
+        $movie->setCasting(
+            [
+                'cast' => $cast,
+                'crew' => $crew,
+            ]
+        );
 
         return true;
     }

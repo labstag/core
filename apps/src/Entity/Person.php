@@ -77,8 +77,6 @@ class Person
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
     private ?DateTime $birthday = null;
 
-
-
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
     private ?DateTime $deathday = null;
 
@@ -96,7 +94,6 @@ class Person
 
     public function __construct()
     {
-
         $this->paragraphs      = new ArrayCollection();
     }
 
