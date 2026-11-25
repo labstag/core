@@ -124,8 +124,8 @@
                 <div class="wrapper">
                     <ul> 
                     {% for acting in cast %}
-                        <li class="teaser-person">
-                            {% include "teasers/person.html.twig"  with {'acting': acting} %}
+                        <li class="teaser-acting">
+                            {% include "teasers/acting.html.twig"  with {'acting': acting} %}
                         </li>
                     {% endfor %}
                     </ul>
@@ -144,9 +144,9 @@
                 <div class="wrapper">
                     <ul> 
                     {% for acting in crew %}
-                        <li class="teaser-person">
+                        <li class="teaser-acting">
                             {% if acting.person != null %}
-                                {% include "teasers/person.html.twig"  with {'acting': acting} %}
+                                {% include "teasers/acting.html.twig"  with {'acting': acting} %}
                             {% endif %}
                         </li>
                     {% endfor %}
