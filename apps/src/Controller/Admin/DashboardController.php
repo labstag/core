@@ -83,6 +83,7 @@ class DashboardController extends AbstractDashboardController
         $tags       = $this->menuItemFactory->createTagMenuItems();
         // Dashboard home
         yield MenuItem::linkToDashboard(new TranslatableMessage('Dashboard'), 'fa fa-home');
+        yield MenuItem::linkToRoute(new TranslatableMessage('Messages Messenger'), 'fas fa-envelope', 'admin_messenger_index');
         yield MenuItem::linkTo(
             NotificationCrudController::class,
             new TranslatableMessage(NotificationCrudController::getEntityLabel()),
