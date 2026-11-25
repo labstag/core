@@ -6,7 +6,7 @@ use Labstag\Api\TheMovieDbApi;
 use Labstag\Entity\Saga;
 use Labstag\Message\SagaMessage;
 use Labstag\Repository\SagaRepository;
-use Labstag\Service\FileService;
+use Labstag\Service\File\FileUploadService;
 use Labstag\Service\MessageDispatcherService;
 use Psr\Log\LoggerInterface;
 
@@ -16,7 +16,7 @@ final class SagaService
         private LoggerInterface $logger,
         private MessageDispatcherService $messageDispatcherService,
         private SagaRepository $sagaRepository,
-        private FileService $fileService,
+        private FileUploadService $fileUploadService,
         private TheMovieDbApi $theMovieDbApi,
     )
     {
@@ -96,7 +96,7 @@ final class SagaService
             return false;
         }
 
-        $this->fileService->setUploadedFile($backdrop, $saga, 'backdropFile');
+        $this->fileUploadService->setUploadedFile($backdrop, $saga, 'backdropFile');
 
         return true;
     }
@@ -111,7 +111,7 @@ final class SagaService
             return false;
         }
 
-        $this->fileService->setUploadedFile($poster, $saga, 'posterFile');
+        $this->fileUploadService->setUploadedFile($poster, $saga, 'posterFile');
 
         return true;
     }

@@ -28,7 +28,7 @@ Priorités proposées (à valider).
 - Ajouter un healthcheck pour la stack (fait).
 
 ## 6. Architecture
-- Réduire le couplage des services IMDB et FileService.
+- Réduire le couplage des services IMDB et FileService (fait).
 - Clarifier les frontières entre `apps/` et `assets/`.
 - Documenter les entités workflow et les flux Messenger.
 

@@ -8,12 +8,12 @@ use Labstag\Api\TheMovieDbApi;
 use Labstag\Entity\Episode;
 use Labstag\Entity\Season;
 use Labstag\Repository\EpisodeRepository;
-use Labstag\Service\FileService;
+use Labstag\Service\File\FileUploadService;
 
 final class EpisodeService
 {
     public function __construct(
-        private FileService $fileService,
+        private FileUploadService $fileUploadService,
         private EpisodeRepository $episodeRepository,
         private TheMovieDbApi $theMovieDbApi,
         private EntityManagerInterface $entityManager,
@@ -167,7 +167,7 @@ final class EpisodeService
             return false;
         }
 
-        $this->fileService->setUploadedFile($poster, $episode, 'imgFile');
+        $this->fileUploadService->setUploadedFile($poster, $episode, 'imgFile');
 
         return true;
     }

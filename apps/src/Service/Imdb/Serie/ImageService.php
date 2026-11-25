@@ -6,12 +6,12 @@ namespace Labstag\Service\Imdb\Serie;
 
 use Labstag\Api\TheMovieDbApi;
 use Labstag\Entity\Serie;
-use Labstag\Service\FileService;
+use Labstag\Service\File\FileUploadService;
 
 final class ImageService
 {
     public function __construct(
-        private FileService $fileService,
+        private FileUploadService $fileUploadService,
         private TheMovieDbApi $theMovieDbApi,
     )
     {
@@ -27,7 +27,7 @@ final class ImageService
             return false;
         }
 
-        $this->fileService->setUploadedFile($backdrop, $serie, 'backdropFile');
+        $this->fileUploadService->setUploadedFile($backdrop, $serie, 'backdropFile');
 
         return true;
     }
@@ -42,7 +42,7 @@ final class ImageService
             return false;
         }
 
-        $this->fileService->setUploadedFile($poster, $serie, 'posterFile');
+        $this->fileUploadService->setUploadedFile($poster, $serie, 'posterFile');
 
         return true;
     }

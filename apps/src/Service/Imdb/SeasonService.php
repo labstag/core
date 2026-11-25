@@ -11,13 +11,15 @@ use Labstag\Entity\Serie;
 use Labstag\Message\EpisodeMessage;
 use Labstag\Repository\EpisodeRepository;
 use Labstag\Repository\SeasonRepository;
-use Labstag\Service\FileService;
+use Labstag\Service\File\FileStorageService;
+use Labstag\Service\File\FileUploadService;
 use Labstag\Service\MessageDispatcherService;
 
 final class SeasonService
 {
     public function __construct(
-        private FileService $fileService,
+        private FileStorageService $fileStorageService,
+    private FileUploadService $fileUploadService,
         private MessageDispatcherService $messageDispatcherService,
         private SeasonRepository $seasonRepository,
         private EntityManagerInterface $entityManager,
@@ -189,16 +191,16 @@ final class SeasonService
                 continue;
             }
 
-            $images[] = $this->fileService->getFileInAdapter('episode', $file);
+            $images[] = $this->fileStorageService->getFileInAdapter('episode', $file);
         }
 
         if ([] === $images) {
             return false;
         }
 
-        $patchwork = $this->fileService->setImgPatchwork($images);
+        $patchwork = $this->fileUploadService->setImgPatchwork($images);
         if (!is_null($patchwork)) {
-            $this->fileService->setUploadedFile($patchwork, $season, 'backdropFile');
+            $this->fileUploadService->setUploadedFile($patchwork, $season, 'backdropFile');
         }
 
         return true;
@@ -214,7 +216,7 @@ final class SeasonService
             return false;
         }
 
-        $this->fileService->setUploadedFile($poster, $season, 'posterFile');
+        $this->fileUploadService->setUploadedFile($poster, $season, 'posterFile');
 
         return true;
     }

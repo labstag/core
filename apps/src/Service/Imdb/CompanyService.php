@@ -6,7 +6,7 @@ use Labstag\Api\TheMovieDbApi;
 use Labstag\Entity\Company;
 use Labstag\Message\CompanyMessage;
 use Labstag\Repository\CompanyRepository;
-use Labstag\Service\FileService;
+use Labstag\Service\File\FileUploadService;
 use Labstag\Service\MessageDispatcherService;
 use Psr\Log\LoggerInterface;
 
@@ -16,7 +16,7 @@ final class CompanyService
         private LoggerInterface $logger,
         private MessageDispatcherService $messageDispatcherService,
         private CompanyRepository $companyRepository,
-        private FileService $fileService,
+        private FileUploadService $fileUploadService,
         private TheMovieDbApi $theMovieDbApi,
     )
     {
@@ -80,7 +80,7 @@ final class CompanyService
             return false;
         }
 
-        $this->fileService->setUploadedFile($poster, $company, 'imgFile');
+        $this->fileUploadService->setUploadedFile($poster, $company, 'imgFile');
 
         return true;
     }
