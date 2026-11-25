@@ -9,7 +9,7 @@ Priorités proposées (à valider).
 
 ## 2. Qualité de code
 - Stabiliser Rector (paramètres compatibles avec la version installée) (fait — rector:dry OK, 23 fichiers).
-- Augmenter progressivement le niveau PHPStan (0 -> 5 -> 8) avec baseline.
+- Augmenter progressivement le niveau PHPStan (0 -> 5 -> 8) avec baseline (fait — niveau 5 + baseline 131 erreurs).
 - Guarder les appels `disable('softdeleteable')` (fait) et documenter le pattern.
 
 ## 3. CI / automatisation
