@@ -8,7 +8,7 @@ use Labstag\Message\PersonAllMessage;
 use Labstag\Message\PersonMessage;
 use Symfony\Component\Messenger\MessageBusInterface;
 
-final class PersonActionService
+class PersonActionService
 {
     public function __construct(
         private MessageBusInterface $messageBus,

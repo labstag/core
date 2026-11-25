@@ -11,7 +11,7 @@ use Symfony\Component\Workflow\Marking;
 use Symfony\Component\Workflow\Registry;
 use Symfony\Component\Workflow\WorkflowInterface;
 
-final class WorkflowService
+class WorkflowService
 {
 
     /**
@@ -32,7 +32,7 @@ final class WorkflowService
     {
         $object = $this->getEntity($entity, $uid);
 
-        if (!$this->workflowRegistry->has($object)) {
+        if (null === $object || !$this->workflowRegistry->has($object)) {
             return;
         }
 

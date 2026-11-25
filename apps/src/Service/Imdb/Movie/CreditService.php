@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Labstag\Service\Imdb\Movie;
@@ -6,7 +7,7 @@ namespace Labstag\Service\Imdb\Movie;
 use Labstag\Entity\Movie;
 use Labstag\Service\Imdb\PersonService;
 
-final class CreditService
+class CreditService
 {
     public function __construct(
         private PersonService $personService,
@@ -40,7 +41,12 @@ final class CreditService
             }
         }
 
-        $movie->setCasting(['cast' => $cast, 'crew' => $crew]);
+        $movie->setCasting(
+            [
+                'cast' => $cast,
+                'crew' => $crew,
+            ]
+        );
 
         return true;
     }

@@ -6,7 +6,7 @@ use Labstag\FrontForm\FrontFormAbstract;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 use Symfony\Component\Form\FormInterface;
 
-final class FormService
+class FormService
 {
     public function __construct(
         /**

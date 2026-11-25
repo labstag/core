@@ -13,6 +13,7 @@
         "doctrine/doctrine-bundle": "3.3.*",
         "doctrine/doctrine-migrations-bundle": "4.0.*",
         "doctrine/orm": "^3.5",
+        "doctrine/orm-plugin-second-level-cache": "^1.0",
         "dragonmantank/cron-expression": "3.6.*",
         "easycorp/easyadmin-bundle": "5.10.*",
         "essence/essence": "3.5.*",
@@ -54,10 +55,10 @@
         "symfony/webpack-encore-bundle": "2.4.*",
         "symfony/workflow": "8.1.*",
         "symfony/yaml": "8.1.*",
-        "twig/extra-bundle": "3.29.*",
-        "twig/intl-extra": "3.30.*",
-        "twig/markdown-extra": "3.29.*",
-        "twig/twig": "3.30.*",
+        "twig/extra-bundle": "3.31.*",
+        "twig/intl-extra": "3.31.*",
+        "twig/markdown-extra": "3.31.*",
+        "twig/twig": "3.31.*",
         "vich/uploader-bundle": "3.0.*"
     },
     "config": {

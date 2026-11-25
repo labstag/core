@@ -8,7 +8,7 @@ use Labstag\Message\SeasonAllMessage;
 use Labstag\Message\SeasonMessage;
 use Symfony\Component\Messenger\MessageBusInterface;
 
-final class SeasonActionService
+class SeasonActionService
 {
     public function __construct(
         private MessageBusInterface $messageBus,

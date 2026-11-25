@@ -20,18 +20,6 @@ class SerieRepository extends RepositoryAbstract
         parent::__construct($managerRegistry, Serie::class);
     }
 
-    public function getByCasting(string $personId): array
-    {
-        $queryBuilder = $this->createQueryBuilder('s');
-        $queryBuilder->where('s.casting LIKE :needle');
-        $queryBuilder->setParameter('needle', '%' . $personId . '%');
-
-        $query = $queryBuilder->getQuery();
-        $query->enableResultCache(3600, 'series-by-casting-' . $personId);
-
-        return $query->getResult();
-    }
-
     public function delete(object $entity): void
     {
         if ($entity instanceof Serie) {
@@ -178,6 +166,18 @@ class SerieRepository extends RepositoryAbstract
         $result = $queryBuilder->getQuery()->getArrayResult();
 
         return array_column($result, 'tmdb');
+    }
+
+    public function getByCasting(string $personId): array
+    {
+        $queryBuilder = $this->createQueryBuilder('s');
+        $queryBuilder->where('s.casting LIKE :needle');
+        $queryBuilder->setParameter('needle', '%' . $personId . '%');
+
+        $query = $queryBuilder->getQuery();
+        $query->enableResultCache(3600, 'series-by-casting-' . $personId);
+
+        return $query->getResult();
     }
 
     public function getCountries(): array

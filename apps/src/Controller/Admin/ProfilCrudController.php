@@ -119,6 +119,11 @@ class ProfilCrudController extends UserCrudController
             throw new AccessDeniedHttpException();
         }
 
-        return $this->redirectToRoute('admin_profil_edit', ['entityId' => $user->getId()]);
+        return $this->redirectToRoute(
+            'admin_profil_edit',
+            [
+                'entityId' => $user->getId(),
+            ]
+        );
     }
 }

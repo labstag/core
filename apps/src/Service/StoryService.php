@@ -10,7 +10,7 @@ use RuntimeException;
 use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-final class StoryService
+class StoryService
 {
 
     /**

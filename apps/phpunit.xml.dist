@@ -7,7 +7,7 @@
          colors="true"
          bootstrap="tests/bootstrap.php"
          cacheDirectory=".phpunit.cache"
-         executionOrder="depends,defects"
+         executionOrder="defects" resolveDependencies="true"
          failOnRisky="true"
          failOnWarning="true"
          stopOnFailure="false"

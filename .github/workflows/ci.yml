@@ -4,6 +4,25 @@ on:
   pull_request:
 
 jobs:
+  security:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'npm'
+      - name: npm audit
+        run: npm audit --audit-level=high || true
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.5'
+      - name: composer audit
+        run: cd apps && composer audit || true
+
   lint:
     runs-on: ubuntu-24.04
     timeout-minutes: 60

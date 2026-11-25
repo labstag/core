@@ -4,7 +4,7 @@ namespace Labstag\Service\Igdb;
 
 use Labstag\Entity\Platform;
 
-final class PlatformService extends AbstractIgdb
+class PlatformService extends AbstractIgdb
 {
     public function addByApi(string $id): ?Platform
     {

@@ -143,7 +143,6 @@ class Movie implements Stringable, EntityWithParagraphsInterface
     #[ORM\Column(type: Types::JSON, nullable: true)]
     private ?array $casting = null;
 
-
     /**
      * @var Collection<int, Company>
      */
@@ -211,13 +210,6 @@ class Movie implements Stringable, EntityWithParagraphsInterface
     public function getCasting(): ?array
     {
         return $this->casting;
-    }
-
-    public function setCasting(?array $casting): static
-    {
-        $this->casting = $casting;
-
-        return $this;
     }
 
     /**
@@ -406,6 +398,13 @@ class Movie implements Stringable, EntityWithParagraphsInterface
             // otherwise the event listeners won't be called and the file is lost
             $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
         }
+    }
+
+    public function setCasting(?array $casting): static
+    {
+        $this->casting = $casting;
+
+        return $this;
     }
 
     public function setCertification(?string $certification): static

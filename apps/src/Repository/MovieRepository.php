@@ -53,18 +53,6 @@ class MovieRepository extends RepositoryAbstract
         return $country;
     }
 
-    public function getByCasting(string $personId): array
-    {
-        $queryBuilder = $this->createQueryBuilder('m');
-        $queryBuilder->where('m.casting LIKE :needle');
-        $queryBuilder->setParameter('needle', '%' . $personId . '%');
-
-        $query = $queryBuilder->getQuery();
-        $query->enableResultCache(3600, 'movies-by-casting-' . $personId);
-
-        return $query->getResult();
-    }
-
     /**
      * @return array<string, mixed>
      */
@@ -180,6 +168,18 @@ class MovieRepository extends RepositoryAbstract
         $result = $queryBuilder->getQuery()->getArrayResult();
 
         return array_column($result, 'tmdb');
+    }
+
+    public function getByCasting(string $personId): array
+    {
+        $queryBuilder = $this->createQueryBuilder('m');
+        $queryBuilder->where('m.casting LIKE :needle');
+        $queryBuilder->setParameter('needle', '%' . $personId . '%');
+
+        $query = $queryBuilder->getQuery();
+        $query->enableResultCache(3600, 'movies-by-casting-' . $personId);
+
+        return $query->getResult();
     }
 
     public function getCertifications(): array

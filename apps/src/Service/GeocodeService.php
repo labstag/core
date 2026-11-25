@@ -5,7 +5,7 @@ namespace Labstag\Service;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use ZipArchive;
 
-final class GeocodeService
+class GeocodeService
 {
     public const HTTP_OK = 200;
 

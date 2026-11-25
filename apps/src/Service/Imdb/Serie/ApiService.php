@@ -10,7 +10,7 @@ use Labstag\Entity\Serie;
 use Labstag\Repository\SerieRepository;
 use Labstag\Service\ConfigurationService;
 
-final class ApiService
+class ApiService
 {
     public function __construct(
         private TheMovieDbApi $theMovieDbApi,

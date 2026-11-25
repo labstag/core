@@ -8,7 +8,7 @@ use Exception;
 use ReflectionClass;
 use ReflectionException;
 
-final class EtagCacheService
+class EtagCacheService
 {
     private const TIME_DAY       = 86400;
 

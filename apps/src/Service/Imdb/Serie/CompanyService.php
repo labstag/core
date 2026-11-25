@@ -7,7 +7,7 @@ namespace Labstag\Service\Imdb\Serie;
 use Labstag\Entity\Serie;
 use Labstag\Service\Imdb\CompanyService as BaseCompanyService;
 
-final class CompanyService
+class CompanyService
 {
     public function __construct(
         private BaseCompanyService $baseCompanyService,

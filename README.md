@@ -13,17 +13,23 @@
 ![All Contributors](https://img.shields.io/badge/all_contributors-5-orange.svg?style=flat-square)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
-## Need
+## Prerequisites
 
 Software:
 
+- PHP >= 8.4 (app requires `>=8.4`; container ships 8.5) — local PHP 8.2 is insufficient
+- Node.js 22
 - npm
-- docker
-- repository koromerzhin/lampy
+- Docker + Docker Swarm
+- `task` (go-task) — Taskfile runner
+- `taskfiles` submodule (cloned with `--recurse-submodules`)
+- `koromerzhin/lampy` repository at the path set by `FOLDERLAMPY`
 
 Config:
 
-docker swarm
+- Docker Swarm initialized (`docker swarm init`)
+- Root `.env` populated from `.env.example` (`SERVERNAME`, `FOLDERLAMPY`, `UID`/`GID`, …)
+- `apps/.env` populated from `apps/.env.example`
 
 Hosts:
 

@@ -2,6 +2,7 @@
 
 namespace Labstag\Repository;
 
+use DateTimeImmutable;
 use DateTime;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
@@ -46,6 +47,16 @@ class PersonRepository extends RepositoryAbstract
         $queryBuilder->setParameter('threshold', $threshold);
 
         return $queryBuilder->getQuery()->getSingleColumnResult();
+    }
+
+    public function findToUpdate(DateTimeImmutable $threshold): array
+    {
+        $queryBuilder = $this->createQueryBuilder('p');
+        $queryBuilder->where('p.deathday IS NULL');
+        $queryBuilder->andWhere('p.updatedAt IS NULL OR p.updatedAt < :threshold');
+        $queryBuilder->setParameter('threshold', $threshold);
+
+        return $queryBuilder->getQuery()->getResult();
     }
 
     /**

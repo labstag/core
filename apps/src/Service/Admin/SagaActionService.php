@@ -8,7 +8,7 @@ use Labstag\Message\SagaAllMessage;
 use Labstag\Message\SagaMessage;
 use Symfony\Component\Messenger\MessageBusInterface;
 
-final class SagaActionService
+class SagaActionService
 {
     public function __construct(
         private MessageBusInterface $messageBus,

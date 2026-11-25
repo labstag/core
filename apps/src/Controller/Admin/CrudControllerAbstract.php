@@ -19,6 +19,15 @@ use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Labstag\Api\TheMovieDbApi;
 use Labstag\Controller\Admin\Factory\ActionsFactory;
 use Labstag\Controller\Admin\Factory\CrudFieldFactory;
+use Labstag\Controller\Admin\Traits\ParagraphAdminTrait;
+use Labstag\Entity\Episode;
+use Labstag\Entity\Meta;
+use Labstag\Entity\Paragraph;
+use Labstag\Entity\Person;
+use Labstag\Entity\Season;
+use Labstag\Entity\Serie;
+use Labstag\Repository\ParagraphRepository;
+use Labstag\Repository\RepositoryAbstract;
 use Labstag\Service\Admin\BlockActionService;
 use Labstag\Service\Admin\EpisodeActionService;
 use Labstag\Service\Admin\GameActionService;
@@ -29,21 +38,12 @@ use Labstag\Service\Admin\SagaActionService;
 use Labstag\Service\Admin\SeasonActionService;
 use Labstag\Service\Admin\SerieActionService;
 use Labstag\Service\Admin\StoryActionService;
-use Labstag\Service\Igdb\Game\GameApiService;
-use Labstag\Controller\Admin\Traits\ParagraphAdminTrait;
-use Labstag\Entity\Episode;
-use Labstag\Entity\Meta;
-use Labstag\Entity\Paragraph;
-use Labstag\Entity\Person;
-use Labstag\Entity\Season;
-use Labstag\Entity\Serie;
-use Labstag\Repository\ParagraphRepository;
-use Labstag\Repository\RepositoryAbstract;
 use Labstag\Service\BlockService;
 use Labstag\Service\ConfigurationService;
 use Labstag\Service\EmailService;
 use Labstag\Service\FileService;
 use Labstag\Service\FormService;
+use Labstag\Service\Igdb\Game\GameApiService;
 use Labstag\Service\Igdb\GameService;
 use Labstag\Service\Igdb\PlatformService;
 use Labstag\Service\Imdb\EpisodeService;
@@ -215,7 +215,7 @@ abstract class CrudControllerAbstract extends AbstractCrudController
                 $criteria = ['refSerie' => $entityInstance];
             }
 
-        if ($entityInstance instanceof Serie) {
+            if ($entityInstance instanceof Serie) {
                 $seasons = $entityManager->getRepository(Season::class)->findBy(
                     ['refserie' => $entityInstance]
                 );

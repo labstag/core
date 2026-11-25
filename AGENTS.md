@@ -5,15 +5,18 @@
 - Always use Git Flow (feature/develop/release/hotfix). Never commit or merge to `main` without explicit user authorization.
 - All user-facing strings in Twig templates must be translation keys (`|trans`); add entries to `apps/translations/messages.fr.xlf`.
 - Run lint and tests before any release.
+- Toujours répondre en français à l'utilisateur.
 
 Symfony 8.1 application (`apps/`) plus a Webpack Encore frontend (root `assets/`). PHP code lives in `apps/src` (PSR-4 `Labstag\`); tests in `apps/tests` (PSR-4 `Labstag\Tests\`).
 
 ## Layout
 
+- `apps/` — Symfony application only: PHP (`src/`), config, templates, migrations, tests, public output. No frontend source here.
 - `apps/src` — application code (controllers, entities, services, forms, Twig extensions, etc.)
 - `apps/tests/{Unit,Integration,Functional,Performance}` — PHPUnit suites
 - `apps/templates`, `apps/config`, `apps/migrations` — views, Symfony config, Doctrine migrations
-- `assets/` (root) — JS/SCSS entrypoints compiled by Encore into `apps/public/build`
+- `assets/` (root) — frontend source only: JS/SCSS entrypoints compiled by Webpack Encore into `apps/public/build`. No PHP here.
+- Rule: PHP/Symfony work in `apps/`; JS/CSS work in `assets/`. Encore bridges them via `apps/public/build`.
 - `taskfiles/` — git submodule (task runner includes); `lampy/` — external infra repo (not in this repo)
 
 ## Environment
@@ -78,6 +81,7 @@ Lint / quality:
 ## Conventions
 
 - All user-facing strings in Twig templates must be translation keys (use `|trans`); add entries to `apps/translations/messages.fr.xlf`.
+- Soft-delete: `disable('softdeleteable')` calls must be guarded by `if ($filters->isEnabled('softdeleteable'))` (or equivalent) before disabling, to avoid errors when the filter is already off. Pattern: check enabled, then disable; re-enable via `enable()` after the query when needed.
 
 ## Architecture notes
 

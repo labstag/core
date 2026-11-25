@@ -9,7 +9,7 @@ use Labstag\Entity\Platform;
 use Labstag\Service\Igdb\GameService;
 use Labstag\Service\Igdb\PlatformService;
 
-final class IgdbService
+class IgdbService
 {
     public function __construct(
         private PlatformService $platformService,

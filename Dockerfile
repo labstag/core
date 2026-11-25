@@ -19,3 +19,6 @@ RUN mkdir -p /var/www/.config /var/www/var/cache /var/www/var/log /var/www/publi
 USER www-data
 
 EXPOSE 80
+
+HEALTHCHECK --interval=30s --timeout=5s --start-period=60s --retries=3 \
+  CMD curl -fsS http://localhost/ || exit 1

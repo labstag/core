@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace Labstag\Service\Igdb\Game;
 
+use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Labstag\Api\IgdbApi;
 use Labstag\Entity\Franchise;
 use Labstag\Entity\Game;
 use Labstag\Entity\Platform;
-use DateTime;
 
-final class GameApiService
+class GameApiService
 {
     public function __construct(
         private IgdbApi $igdbApi,

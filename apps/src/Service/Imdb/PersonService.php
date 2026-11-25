@@ -5,21 +5,17 @@ namespace Labstag\Service\Imdb;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Labstag\Api\TheMovieDbApi;
-use Labstag\Entity\Episode;
-use Labstag\Entity\Movie;
 use Labstag\Entity\Person;
-use Labstag\Entity\Season;
-use Labstag\Entity\Serie;
 use Labstag\Message\PersonMessage;
-use Labstag\Service\FileService;
+use Labstag\Service\File\FileUploadService;
 use Labstag\Service\MessageDispatcherService;
 
-final class PersonService
+class PersonService
 {
     public function __construct(
         private MessageDispatcherService $messageDispatcherService,
         private EntityManagerInterface $entityManager,
-        private FileService $fileService,
+        private FileUploadService $fileUploadService,
         private TheMovieDbApi $theMovieDbApi,
     )
     {
@@ -76,7 +72,7 @@ final class PersonService
             return false;
         }
 
-        $this->fileService->setUploadedFile($poster, $person, 'profileFile');
+        $this->fileUploadService->setUploadedFile($poster, $person, 'profileFile');
 
         return true;
     }

@@ -18,7 +18,7 @@ use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-final class MovieActionService
+class MovieActionService
 {
     public function __construct(
         private MessageBusInterface $messageBus,

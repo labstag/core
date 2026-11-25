@@ -3,8 +3,6 @@
 namespace Labstag\Controller\Admin;
 
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
-use Labstag\Field\CastField;
-use Labstag\Field\CrewField;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
@@ -18,11 +16,12 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
 use Labstag\Entity\Movie;
+use Labstag\Field\CastField;
+use Labstag\Field\CrewField;
 use Labstag\Field\WysiwygField;
 use Labstag\Filter\CountriesFilter;
 use Labstag\Form\Admin\MovieImportType;
 use Labstag\Form\Admin\MovieType;
-use Labstag\Service\Admin\MovieActionService;
 use Override;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -173,6 +172,7 @@ class MovieCrudController extends CrudControllerAbstract
                 $castField,
                 $crewField,
                 $this->crudFieldFactory->booleanField('adult', new TranslatableMessage('Adult')),
+                $this->crudFieldFactory->booleanField('file', new TranslatableMessage('On your computer')),
             ]
         );
         $this->crudFieldFactory->setTabDate($pageName);

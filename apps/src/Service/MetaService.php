@@ -11,7 +11,7 @@ use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Twig\Environment;
 
-final class MetaService
+class MetaService
 {
     public function __construct(
         #[AutowireIterator('labstag.datas')]

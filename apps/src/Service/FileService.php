@@ -11,7 +11,7 @@ use Labstag\Service\File\FileStorageService;
 use Labstag\Service\File\FileUploadService;
 use Symfony\Component\PropertyAccess\PropertyPathInterface;
 
-final class FileService
+class FileService
 {
     public function __construct(
         private FileStorageService $fileStorageService,

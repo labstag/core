@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace Labstag\Service\File;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Vich\UploaderBundle\Mapping\Attribute\UploadableField;
 use ReflectionClass;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
+use Vich\UploaderBundle\Mapping\Attribute\UploadableField;
 
-final class FileCleanupService
+class FileCleanupService
 {
     public function __construct(
         #[AutowireIterator('labstag.filestorage')]

@@ -17,7 +17,7 @@ use Labstag\Entity\Story;
 use Labstag\Enum\PageEnum;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-final class SitemapService
+class SitemapService
 {
 
     /**

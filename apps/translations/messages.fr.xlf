@@ -2445,6 +2445,62 @@
         <source>Publish</source>
         <target>Publier</target>
       </trans-unit>
+      <trans-unit id="amc1HZB" resname="Crew">
+        <source>Crew</source>
+        <target>Équipe</target>
+      </trans-unit>
+      <trans-unit id="dpqWEzT" resname="On your computer">
+        <source>On your computer</source>
+        <target>Sur votre ordinateur</target>
+      </trans-unit>
+      <trans-unit id="pfjhuzI" resname="Edit Paragraph">
+        <source>Edit Paragraph</source>
+        <target>Modifier le paragraphe</target>
+      </trans-unit>
+      <trans-unit id="LZXye1z" resname="Department">
+        <source>Department</source>
+        <target>Département</target>
+      </trans-unit>
+      <trans-unit id="_62c3tU" resname="Job">
+        <source>Job</source>
+        <target>Poste</target>
+      </trans-unit>
+      <trans-unit id="rNNUnFA" resname="Character">
+        <source>Character</source>
+        <target>Personnage</target>
+      </trans-unit>
+      <trans-unit id="jT23Get" resname="No castings available">
+        <source>No castings available</source>
+        <target>Aucun casting disponible</target>
+      </trans-unit>
+      <trans-unit id="k_43qGF" resname="Messages Messenger">
+        <source>Messages Messenger</source>
+        <target>Messages Messenger</target>
+      </trans-unit>
+      <trans-unit id="tj4phAY" resname="Queue">
+        <source>Queue</source>
+        <target>File d'attente</target>
+      </trans-unit>
+      <trans-unit id="cGXWNw." resname="Body">
+        <source>Body</source>
+        <target>Corps</target>
+      </trans-unit>
+      <trans-unit id="QizowMq" resname="Created">
+        <source>Created</source>
+        <target>Créé</target>
+      </trans-unit>
+      <trans-unit id="Xw8lVgH" resname="Available">
+        <source>Available</source>
+        <target>Disponible</target>
+      </trans-unit>
+      <trans-unit id="tQPP6b8" resname="Delivered">
+        <source>Delivered</source>
+        <target>Délivré</target>
+      </trans-unit>
+      <trans-unit id="Z_crX_u" resname="Delete">
+        <source>Delete</source>
+        <target>Supprimer</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

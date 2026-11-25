@@ -13,7 +13,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Exception;
 use Labstag\Entity\Redirection;
 use Labstag\Form\Admin\RedirectionImportType;
-use Labstag\Service\Admin\RedirectionActionService;
 use Override;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Reader\Csv;
@@ -102,6 +101,7 @@ class RedirectionCrudController extends CrudControllerAbstract
         return $redirection;
     }
 
+    #[AdminRoute(path: '/export')]
     public function export(): void
     {
         $all    = $this->getRepository(Redirection::class)->findAll();

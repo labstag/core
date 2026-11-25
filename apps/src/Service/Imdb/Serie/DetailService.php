@@ -8,7 +8,7 @@ use DateTime;
 use Labstag\Entity\Serie;
 use Labstag\Service\VideoService;
 
-final class DetailService
+class DetailService
 {
     public function __construct(
         private VideoService $videoService,
