@@ -18,9 +18,22 @@ Priorités proposées (à valider).
 - Ajouter des checks de sécurité dépendances dans la CI (fait — job security: npm audit + composer audit).
 
 ## 4. Sécurité
-- Traiter les 80 alertes Dependabot (2 critiques, 41 hautes).
+- Traiter les alertes Dependabot (voir plan détaillé ci-dessous).
 - Mettre à jour Symfony, Doctrine et dépendances JS vulnérables.
 - Auditer les clés API dans `.env` et secrets.
+
+### Plan — alertes Dependabot
+1. Inventaire : `gh api repos/labstag/core/dependabot/alerts` (290 ouvertes : 10 critiques, 121 hautes). Grouper par écosystème (composer vs npm) et par paquet.
+2. Phase npm (sans Docker) :
+   - `npm audit` → corriger les critiques sans fix de version (ex. maplibre-gl : remplacer/augmenter la version ou retirer si inutilisé).
+   - Corriger les hauts via bumps non-breaking (uuid, serialize-javascript) dans `package.json`, puis `npm run encore:build`.
+   - Reporter les fixes nécessitant des downgrades majeurs (webpack-encore, release-it) en tâches séparées.
+3. Phase composer (dans le conteneur `www`) :
+   - `task labstag:exec` puis `composer audit`.
+   - `composer update` ciblé sur les paquets vulnérables (Symfony, Doctrine) avec `--with-all-dependencies`.
+   - Valider avec `task doctrine:schema:validate` et `task test:all`.
+4. Vérification : `npm audit` et `composer audit` à 0 critiques/hautes ; build Encore OK ; tests verts.
+5. Fermer les alertes corrigées via l'API GitHub (dismiss/close) et mettre à jour cette ligne du PLAN.
 
 ## 5. Infrastructure
 - Corriger Supervisor pour les logs non seekables (fait).
@@ -30,7 +43,7 @@ Priorités proposées (à valider).
 ## 6. Architecture
 - Réduire le couplage des services IMDB et FileService (fait).
 - Clarifier les frontières entre `apps/` et `assets/` (fait — voir AGENTS.md §Layout).
-- Documenter les entités workflow et les flux Messenger.
+- Documenter les entités workflow et les flux Messenger (fait — voir docs/architecture/workflows-messenger.md).
 
 ## 7. Gouvernance Git
 - Appliquer Git Flow (fait documenté).
@@ -45,4 +58,4 @@ Priorités proposées (à valider).
 
 ## 9. Administration
 - Vue "Corbeille" sur le dashboard (comptage + liens) (fait).
-- Correction des `#[AdminRoute]` avec chemins explicites.
+- Correction des `#[AdminRoute]` avec chemins explicites (fait).

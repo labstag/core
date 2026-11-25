@@ -26,4 +26,4 @@ docker-compose-*.yml
 /cypress/screenshots
 /.superpowers
 .superpowers/
-docs/
+# docs/
