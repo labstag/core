@@ -4,6 +4,9 @@
 
 {% block main %}
 <form method="post" action="{{ path('admin_messenger_bulk_delete') }}">
+<div class="mb-2">
+    <button type="submit" class="btn btn-danger btn-sm">{{ 'Delete selected'|trans }}</button>
+</div>
 <table class="table">
     <thead>
         <tr>
@@ -34,7 +37,6 @@
     {% endfor %}
     </tbody>
 </table>
-<button type="submit" class="btn btn-danger btn-sm">{{ 'Delete selected'|trans }}</button>
 </form>
 
 <nav aria-label="pagination">
