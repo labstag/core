@@ -2445,6 +2445,34 @@
         <source>Publish</source>
         <target>Publier</target>
       </trans-unit>
+      <trans-unit id="amc1HZB" resname="Crew">
+        <source>Crew</source>
+        <target>Équipe</target>
+      </trans-unit>
+      <trans-unit id="dpqWEzT" resname="On your computer">
+        <source>On your computer</source>
+        <target>Sur votre ordinateur</target>
+      </trans-unit>
+      <trans-unit id="pfjhuzI" resname="Edit Paragraph">
+        <source>Edit Paragraph</source>
+        <target>Modifier le paragraphe</target>
+      </trans-unit>
+      <trans-unit id="LZXye1z" resname="Department">
+        <source>Department</source>
+        <target>Département</target>
+      </trans-unit>
+      <trans-unit id="_62c3tU" resname="Job">
+        <source>Job</source>
+        <target>Poste</target>
+      </trans-unit>
+      <trans-unit id="rNNUnFA" resname="Character">
+        <source>Character</source>
+        <target>Personnage</target>
+      </trans-unit>
+      <trans-unit id="jT23Get" resname="No castings available">
+        <source>No castings available</source>
+        <target>Aucun casting disponible</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

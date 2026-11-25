@@ -173,6 +173,7 @@ class MovieCrudController extends CrudControllerAbstract
                 $castField,
                 $crewField,
                 $this->crudFieldFactory->booleanField('adult', new TranslatableMessage('Adult')),
+                $this->crudFieldFactory->booleanField('file', new TranslatableMessage('On your computer')),
             ]
         );
         $this->crudFieldFactory->setTabDate($pageName);
