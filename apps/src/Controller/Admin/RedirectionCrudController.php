@@ -102,6 +102,7 @@ class RedirectionCrudController extends CrudControllerAbstract
         return $redirection;
     }
 
+    #[AdminRoute(path: '/export')]
     public function export(): void
     {
         $all    = $this->getRepository(Redirection::class)->findAll();

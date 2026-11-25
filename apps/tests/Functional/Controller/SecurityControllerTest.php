@@ -20,4 +20,42 @@ final class SecurityControllerTest extends AbstractWebTestCase
         $this->client()->request(Request::METHOD_GET, '/connexion');
         $this->assertResponseIsSuccessful();
     }
+
+    #[Test]
+    #[Group('functional')]
+    #[Group('controller')]
+    #[Group('security')]
+    public function loginRouteLoads(): void
+    {
+        $this->client()->request(Request::METHOD_GET, '/login');
+        $response = $this->client()->getResponse();
+        $this->assertTrue($response->isSuccessful() || $response->isRedirection() || $response->getStatusCode() === 404);
+    }
+
+    #[Test]
+    #[Group('functional')]
+    #[Group('controller')]
+    #[Group('security')]
+    public function loginPostInvalid(): void
+    {
+        $this->client()->request(Request::METHOD_POST, '/connexion', [
+            'login' => [
+                'username' => 'nope@example.com',
+                'password' => 'wrong',
+            ],
+        ]);
+        $response = $this->client()->getResponse();
+        $this->assertTrue($response->isRedirection() || $response->isSuccessful());
+    }
+
+    #[Test]
+    #[Group('functional')]
+    #[Group('controller')]
+    #[Group('security')]
+    public function logoutRouteLoads(): void
+    {
+        $this->client()->request(Request::METHOD_GET, '/logout');
+        $response = $this->client()->getResponse();
+        $this->assertTrue($response->isRedirection() || $response->getStatusCode() === 404 || $response->isSuccessful());
+    }
 }

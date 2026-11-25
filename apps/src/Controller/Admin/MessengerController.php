@@ -4,7 +4,6 @@ namespace Labstag\Controller\Admin;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\Translation\TranslatableMessage;
@@ -33,7 +32,7 @@ class MessengerController extends AbstractController
     }
 
     #[Route('/delete/{id}', name: 'admin_messenger_delete', requirements: ['id' => '\d+'])]
-    public function delete(int $id, Request $request): Response
+    public function delete(int $id): Response
     {
         $this->connection()->delete('messenger_messages', ['id' => $id]);
         $this->addFlash('success', new TranslatableMessage('Message deleted.'));
