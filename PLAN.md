@@ -5,7 +5,7 @@ Priorités proposées (à valider).
 ## 1. Expérience développeur
 - Documenter les prérequis locaux (PHP >= 8.4, Node 22, Docker, lampy, taskfiles) (fait — voir README §Prerequisites).
 - Permettre l'exécution des tests unitaires sans la stack complète (SQLite déjà utilisé).
-- Ajouter des commandes `task` pour lancer un sous-ensemble de tests rapidement.
+- Ajouter des commandes `task` pour lancer un sous-ensemble de tests rapidement (fait — test:unit/integration/functional/performance/quick).
 
 ## 2. Qualité de code
 - Stabiliser Rector (paramètres compatibles avec la version installée).
