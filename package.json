@@ -1,6 +1,6 @@
 {
   "name": "@labstag/core",
-  "version": "1.11.4",
+  "version": "1.11.5",
   "description": "Labstag in Symfony 7.1",
   "main": "index.js",
   "scripts": {
@@ -64,7 +64,6 @@
   "dependencies": {
     "@fontsource/lobster": "5.3.*",
     "@fortawesome/fontawesome-free": "7.3.*",
-
     "a11y-dialog": "8.1.*",
     "baseline-browser-mapping": "2.11.*",
     "caniuse-lite": "1.0.*",
