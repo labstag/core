@@ -44,5 +44,5 @@ Priorités proposées (à valider).
 - README mis à jour avec exemple d'utilisation.
 
 ## 9. Administration
-- Vue "Corbeille" sur le dashboard (comptage + liens).
+- Vue "Corbeille" sur le dashboard (comptage + liens) (fait).
 - Correction des `#[AdminRoute]` avec chemins explicites.
