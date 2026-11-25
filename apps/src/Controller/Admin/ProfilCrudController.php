@@ -114,8 +114,11 @@ class ProfilCrudController extends UserCrudController
     #[Override]
     public function index(AdminContext $adminContext): Response
     {
-        unset($adminContext);
+        $user = $adminContext->getUser();
+        if (!$user instanceof User) {
+            throw new AccessDeniedHttpException();
+        }
 
-        throw new AccessDeniedHttpException();
+        return $this->redirectToRoute('admin_profil_edit', ['entityId' => $user->getId()]);
     }
 }
