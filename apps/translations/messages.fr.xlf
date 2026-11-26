@@ -2503,43 +2503,47 @@
       </trans-unit>
       <trans-unit id="ZIWxAxP" resname="Messenger Inspector">
         <source>Messenger Inspector</source>
-        <target>__Messenger Inspector</target>
+        <target>Inspecteur Messenger</target>
       </trans-unit>
-      <trans-unit id="hdr0001" resname="Headers">
+      <trans-unit id="uL44Cug" resname="Headers">
         <source>Headers</source>
         <target>En-têtes</target>
       </trans-unit>
-      <trans-unit id="msg0001" resname="Message Class">
+      <trans-unit id="srf.z6l" resname="Message Class">
         <source>Message Class</source>
         <target>Classe du message</target>
       </trans-unit>
-      <trans-unit id="msg0002" resname="Retry Count">
+      <trans-unit id="SoPlL8L" resname="Retry Count">
         <source>Retry Count</source>
         <target>Nombre de tentatives</target>
       </trans-unit>
-      <trans-unit id="msg0003" resname="Dispatched At">
+      <trans-unit id="y7gOvrg" resname="Dispatched At">
         <source>Dispatched At</source>
         <target>Envoyé le</target>
       </trans-unit>
-      <trans-unit id="msg0004" resname="Started At">
+      <trans-unit id="ND3W50y" resname="Started At">
         <source>Started At</source>
         <target>Démarré le</target>
       </trans-unit>
-      <trans-unit id="msg0005" resname="Finished At">
+      <trans-unit id="E_LXPFk" resname="Finished At">
         <source>Finished At</source>
         <target>Terminé le</target>
       </trans-unit>
-      <trans-unit id="msg0006" resname="Duration Ms">
+      <trans-unit id="EUx9pz2" resname="Duration Ms">
         <source>Duration Ms</source>
         <target>Durée (ms)</target>
       </trans-unit>
-      <trans-unit id="msg0007" resname="Transports">
+      <trans-unit id="09V_UUH" resname="Transports">
         <source>Transports</source>
         <target>Transports</target>
       </trans-unit>
-      <trans-unit id="msg0008" resname="Status">
+      <trans-unit id="6xCSWiZ" resname="Status">
         <source>Status</source>
         <target>Statut</target>
+      </trans-unit>
+      <trans-unit id="1Z8uBHi" resname="Messages">
+        <source>Messages</source>
+        <target>Messages</target>
       </trans-unit>
     </body>
   </file>
