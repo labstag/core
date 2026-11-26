@@ -2,6 +2,7 @@
 
 namespace Labstag\EventSubscriber;
 
+use JsonSerializable;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Labstag\Entity\Messenger as MessengerEntity;
@@ -102,9 +103,11 @@ class MessengerHistorySubscriber implements EventSubscriberInterface
         $row->setTransports($transports);
         $row->setMessageClass($event->getEnvelope()->getMessage()::class);
         $row->setStatus(MessengerEntity::STATUS_PENDING);
+
         $message = $event->getEnvelope()->getMessage();
         $row->setPayload($this->mask($this->toArray($message)));
         $row->setHeaders($this->mask($this->headers($event->getEnvelope())));
+
         $this->em->persist($row);
         $this->flush();
     }
@@ -173,7 +176,7 @@ class MessengerHistorySubscriber implements EventSubscriberInterface
                 return $value->toArray();
             }
 
-            if ($value instanceof \JsonSerializable) {
+            if ($value instanceof JsonSerializable) {
                 return $value->jsonSerialize();
             }
 

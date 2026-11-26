@@ -138,8 +138,8 @@ class EpisodeCrudController extends CrudControllerAbstract
             )
         );
 
-                $this->crudFieldFactory->addFilterCreatedAtFor($filters, self::getEntityFqcn());
-return $filters;
+        $this->crudFieldFactory->addFilterCreatedAtFor($filters, self::getEntityFqcn());
+        return $filters;
     }
 
     public static function getEntityFqcn(): string

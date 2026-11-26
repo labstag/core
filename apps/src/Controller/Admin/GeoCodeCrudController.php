@@ -85,8 +85,8 @@ class GeoCodeCrudController extends CrudControllerAbstract
         $filters->add(TextFilter::new('placeName', new TranslatableMessage('Place')));
         $filters->add(TextFilter::new('postalCode', new TranslatableMessage('Postal code')));
 
-                $this->crudFieldFactory->addFilterCreatedAtFor($filters, self::getEntityFqcn());
-return $filters;
+        $this->crudFieldFactory->addFilterCreatedAtFor($filters, self::getEntityFqcn());
+        return $filters;
     }
 
     public static function getEntityFqcn(): string

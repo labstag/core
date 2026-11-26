@@ -115,8 +115,8 @@ class SeasonCrudController extends CrudControllerAbstract
         $this->crudFieldFactory->addFilterEnable($filters);
         $filters->add(EntityFilter::new('refserie', new TranslatableMessage('Serie')));
 
-                $this->crudFieldFactory->addFilterCreatedAtFor($filters, self::getEntityFqcn());
-return $filters;
+        $this->crudFieldFactory->addFilterCreatedAtFor($filters, self::getEntityFqcn());
+        return $filters;
     }
 
     public function episodesField(): AssociationField

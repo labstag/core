@@ -228,8 +228,8 @@ class GameCrudController extends CrudControllerAbstract
         $filters->add('platforms');
         $filters->add('franchises');
 
-                $this->crudFieldFactory->addFilterCreatedAtFor($filters, self::getEntityFqcn());
-return $filters;
+        $this->crudFieldFactory->addFilterCreatedAtFor($filters, self::getEntityFqcn());
+        return $filters;
     }
 
     public static function getEntityFqcn(): string
