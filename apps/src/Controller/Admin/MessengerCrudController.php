@@ -8,7 +8,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\ArrayFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
-use EasyCorp\Bundle\EasyAdminBundle\Filter\NullFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ArrayField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
@@ -92,7 +91,6 @@ class MessengerCrudController extends CrudControllerAbstract
         $filters->add('dispatchedAt');
         $filters->add('startedAt');
         $filters->add('finishedAt');
-        $filters->add(NullFilter::new('finishedAt', new TranslatableMessage('Not finished')));
         $filters->add('durationMs');
 
         $this->crudFieldFactory->addFilterCreatedAtFor($filters, self::getEntityFqcn());
