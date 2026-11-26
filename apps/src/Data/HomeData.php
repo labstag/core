@@ -15,7 +15,7 @@ class HomeData extends DataAbstract implements DataInterface
     }
 
     #[Override]
-    public function getEntity(?string $slug): object
+    public function getEntity(?string $slug): ?object
     {
         unset($slug);
 
@@ -23,9 +23,9 @@ class HomeData extends DataAbstract implements DataInterface
     }
 
     #[Override]
-    public function getTitle(object $entity): string
+    public function getTitle(?object $entity): string
     {
-        return $entity->getTitle();
+        return $entity?->getTitle() ?? '';
     }
 
     #[Override]

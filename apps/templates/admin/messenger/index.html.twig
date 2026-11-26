@@ -6,6 +6,7 @@
 <table class="table">
     <thead>
         <tr>
+            <th><input type="checkbox" id="select-all"></th>
             <th>{{ 'ID'|trans }}</th>
             <th>{{ 'Queue'|trans }}</th>
             <th>{{ 'Body'|trans }}</th>
@@ -18,6 +19,7 @@
     <tbody>
     {% for row in rows %}
         <tr>
+            <td><input type="checkbox" name="ids[]" value="{{ row.id }}"></td>
             <td>{{ row.id }}</td>
             <td>{{ row.queue_name }}</td>
             <td>{{ row.body|slice(0,80) }}</td>
@@ -31,4 +33,15 @@
     {% endfor %}
     </tbody>
 </table>
+</form>
+
+<nav aria-label="pagination">
+    <ul class="pagination">
+        {% for p in 1..pages %}
+            <li class="page-item {{ p == page ? 'active' : '' }}">
+                <a class="page-link" href="{{ path('admin_messenger_index', {page: p}) }}">{{ p }}</a>
+            </li>
+        {% endfor %}
+    </ul>
+</nav>
 {% endblock %}
