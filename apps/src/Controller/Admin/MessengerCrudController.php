@@ -6,6 +6,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
+use EasyCorp\Bundle\EasyAdminBundle\Filter\ArrayFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ArrayField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
@@ -73,7 +74,7 @@ class MessengerCrudController extends CrudControllerAbstract
                 ])
         );
         $filters->add('retryCount');
-        $filters->add('transports');
+        $filters->add(ArrayFilter::new('transports', new TranslatableMessage('Transports')));
         $filters->add('dispatchedAt');
         $filters->add('startedAt');
         $filters->add('finishedAt');
