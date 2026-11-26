@@ -105,6 +105,7 @@ class ProfilCrudController extends UserCrudController
         $this->crudFieldFactory->addFilterEnable($filters);
 
         $this->crudFieldFactory->addFilterCreatedAtFor($filters, self::getEntityFqcn());
+        $this->crudFieldFactory->addFilterStateFor($filters, self::getEntityFqcn());
         return $filters;
     }
 

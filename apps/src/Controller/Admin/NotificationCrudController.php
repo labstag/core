@@ -55,6 +55,7 @@ class NotificationCrudController extends CrudControllerAbstract
     {
         $this->crudFieldFactory->addFilterCreatedAtFor($filters, self::getEntityFqcn());
 
+        $this->crudFieldFactory->addFilterStateFor($filters, self::getEntityFqcn());
         return $filters;
     }
 

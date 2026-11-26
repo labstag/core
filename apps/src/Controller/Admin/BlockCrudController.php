@@ -19,7 +19,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
-use EasyCorp\Bundle\EasyAdminBundle\Filter\NumericFilter;
 use Exception;
 use Labstag\Entity\Block;
 use Labstag\Filter\DiscriminatorTypeFilter;
@@ -169,7 +168,6 @@ class BlockCrudController extends CrudControllerAbstract
     public function configureFilters(Filters $filters): Filters
     {
         $this->crudFieldFactory->addFilterEnable($filters);
-        $filters->add(NumericFilter::new('position', new TranslatableMessage('Position')));
         $filters->add(ChoiceFilter::new('region', new TranslatableMessage('Region'))->setChoices($this->blockService->getRegions()));
 
         $types = $this->blockService->getAll(null);
@@ -190,6 +188,7 @@ class BlockCrudController extends CrudControllerAbstract
         $filters->add($discriminatorTypeFilter);
 
         $this->crudFieldFactory->addFilterCreatedAtFor($filters, self::getEntityFqcn());
+        $this->crudFieldFactory->addFilterStateFor($filters, self::getEntityFqcn());
         return $filters;
     }
 

@@ -77,6 +77,7 @@ class PageCrudController extends CrudControllerAbstract
         $this->crudFieldFactory->addFilterCategoriesFor($filters, self::getEntityFqcn());
 
         $this->crudFieldFactory->addFilterCreatedAtFor($filters, self::getEntityFqcn());
+        $this->crudFieldFactory->addFilterStateFor($filters, self::getEntityFqcn());
         return $filters;
     }
 

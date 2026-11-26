@@ -142,6 +142,7 @@ class HttpErrorLogsCrudController extends CrudControllerAbstract
         $filters->add('requestMethod');
 
         $this->crudFieldFactory->addFilterCreatedAtFor($filters, self::getEntityFqcn());
+        $this->crudFieldFactory->addFilterStateFor($filters, self::getEntityFqcn());
         return $filters;
     }
 

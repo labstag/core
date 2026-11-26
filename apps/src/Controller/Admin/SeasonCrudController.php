@@ -116,6 +116,7 @@ class SeasonCrudController extends CrudControllerAbstract
         $filters->add(EntityFilter::new('refserie', new TranslatableMessage('Serie')));
 
         $this->crudFieldFactory->addFilterCreatedAtFor($filters, self::getEntityFqcn());
+        $this->crudFieldFactory->addFilterStateFor($filters, self::getEntityFqcn());
         return $filters;
     }
 

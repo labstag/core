@@ -32,6 +32,7 @@ class MovieCategoryCrudController extends CategoryCrudControllerAbstract
     {
         $this->crudFieldFactory->addFilterCreatedAtFor($filters, self::getEntityFqcn());
 
+        $this->crudFieldFactory->addFilterStateFor($filters, self::getEntityFqcn());
         return $filters;
     }
 

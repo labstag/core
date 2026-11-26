@@ -73,6 +73,7 @@ class ChapterCrudController extends CrudControllerAbstract
         $this->crudFieldFactory->addFilterTagsFor($filters, self::getEntityFqcn());
 
         $this->crudFieldFactory->addFilterCreatedAtFor($filters, self::getEntityFqcn());
+        $this->crudFieldFactory->addFilterStateFor($filters, self::getEntityFqcn());
         return $filters;
     }
 
