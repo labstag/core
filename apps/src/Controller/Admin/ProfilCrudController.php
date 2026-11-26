@@ -102,6 +102,8 @@ class ProfilCrudController extends UserCrudController
     #[Override]
     public function configureFilters(Filters $filters): Filters
     {
+        $this->crudFieldFactory->addFilterEnable($filters);
+
         return $filters;
     }
 
