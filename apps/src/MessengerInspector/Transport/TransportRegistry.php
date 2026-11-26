@@ -1,22 +1,27 @@
 <?php
 
-namespace Labstag\MessengerInspector\Transport;
+declare(strict_types=1);
 
-use Symfony\Component\Messenger\Transport\TransportInterface;
+namespace Labstag\MessengerInspector\Transport;
 
 class TransportRegistry
 {
-    /** @var TransportAdapterInterface[] */
+
+    /**
+     * @var TransportAdapterInterface[]
+     */
     private array $adapters = [];
+
+    /**
+     * @return TransportAdapterInterface[]
+     */
+    public function all(): array
+    {
+        return $this->adapters;
+    }
 
     public function register(TransportAdapterInterface $adapter): void
     {
         $this->adapters[] = $adapter;
-    }
-
-    /** @return TransportAdapterInterface[] */
-    public function all(): array
-    {
-        return $this->adapters;
     }
 }

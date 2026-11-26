@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Labstag\Messenger\Middleware;
 
+use Symfony\Component\Messenger\Stamp\StampInterface;
 use Labstag\Messenger\Stamp\CorrelationIdStamp;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\Middleware\MiddlewareInterface;
@@ -11,7 +14,7 @@ class CorrelationIdMiddleware implements MiddlewareInterface
 {
     public function handle(Envelope $envelope, StackInterface $stack): Envelope
     {
-        if (null === $envelope->last(CorrelationIdStamp::class)) {
+        if (!$envelope->last(CorrelationIdStamp::class) instanceof StampInterface) {
             $envelope = $envelope->with(new CorrelationIdStamp());
         }
 
