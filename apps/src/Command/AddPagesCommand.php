@@ -37,9 +37,6 @@ class AddPagesCommand
             $home->setTitle('Accueil');
         }
 
-        if (!$home->getSlug()) {
-        }
-
         $this->pageRepository->save($home);
 
         foreach (PageEnum::cases() as $case) {

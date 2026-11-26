@@ -66,10 +66,7 @@ class MessengerRepository extends ServiceEntityRepository
 
     public function findDistinctMessageClasses(): array
     {
-        $rows = $this->createQueryBuilder('m')
-            ->select('DISTINCT m.messageClass AS c')
-            ->getQuery()
-            ->getSingleColumnResult();
+        $rows = $this->createQueryBuilder('m')->select('DISTINCT m.messageClass AS c')->getQuery()->getSingleColumnResult();
 
         $choices = [];
         foreach ($rows as $class) {

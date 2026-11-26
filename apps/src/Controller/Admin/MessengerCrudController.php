@@ -6,12 +6,12 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
-use EasyCorp\Bundle\EasyAdminBundle\Filter\ArrayFilter;
-use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ArrayField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use EasyCorp\Bundle\EasyAdminBundle\Filter\ArrayFilter;
+use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
 use Labstag\Entity\Messenger;
 use Override;
 use Symfony\Component\Translation\TranslatableMessage;
@@ -73,18 +73,19 @@ class MessengerCrudController extends CrudControllerAbstract
                 $choices[$class] = $class;
             }
         }
+
         $filters->add(
-            ChoiceFilter::new('messageClass', new TranslatableMessage('Message Class'))
-                ->setChoices($choices)
+            ChoiceFilter::new('messageClass', new TranslatableMessage('Message Class'))->setChoices($choices)
         );
         $filters->add(
-            ChoiceFilter::new('status', new TranslatableMessage('Status'))
-                ->setChoices([
+            ChoiceFilter::new('status', new TranslatableMessage('Status'))->setChoices(
+                [
                     'pending'    => 'pending',
                     'processing' => 'processing',
                     'success'    => 'success',
                     'failed'     => 'failed',
-                ])
+                ]
+            )
         );
         $filters->add('retryCount');
         $filters->add(ArrayFilter::new('transports', new TranslatableMessage('Transports')));
