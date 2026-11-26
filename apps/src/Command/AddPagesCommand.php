@@ -31,6 +31,7 @@ class AddPagesCommand
         if (!$home instanceof Page) {
             $home = new Page();
             $home->setType(PageEnum::HOME->value);
+            $home->setTitle('Accueil');
             $this->pageRepository->save($home);
         }
 
