@@ -73,7 +73,7 @@ class PageFixtures extends FixtureAbstract implements DependentFixtureInterface
     {
         $sagas = new Page();
         $sagas->setPage($page);
-        $sagas->setTitle('Ma ludothèque');
+        $sagas->setTitle('Ludothèque');
         $sagas->setType(PageEnum::GAMES->value);
 
         $this->addParagraphText($sagas);
