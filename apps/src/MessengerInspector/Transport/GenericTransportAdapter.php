@@ -6,15 +6,34 @@ namespace Labstag\MessengerInspector\Transport;
 
 class GenericTransportAdapter implements TransportAdapterInterface
 {
-    /**
-     * @param string[] $capabilities
-     */
     public function __construct(
-        private readonly string $name,
-        private readonly string $type,
-        private readonly array $capabilities = [],
+        private string $name,
+        private string $type
     )
     {
+    }
+
+    public function delete(string $id): bool
+    {
+        return false;
+    }
+
+    public function getFailedMessages(int $limit = 50): array
+    {
+        return [];
+    }
+
+    public function getInfo(): array
+    {
+        return [
+            'name' => $this->name,
+            'type' => $this->type,
+        ];
+    }
+
+    public function getMessages(int $limit = 50): array
+    {
+        return [];
     }
 
     public function getName(): string
@@ -22,13 +41,23 @@ class GenericTransportAdapter implements TransportAdapterInterface
         return $this->name;
     }
 
+    public function getPendingCount(): ?int
+    {
+        return null;
+    }
+
     public function getType(): string
     {
         return $this->type;
     }
 
+    public function retry(string $id): bool
+    {
+        return false;
+    }
+
     public function supports(string $capability): bool
     {
-        return in_array($capability, $this->capabilities, true);
+        return false;
     }
 }
