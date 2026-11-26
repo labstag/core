@@ -87,7 +87,7 @@ class PageFixtures extends FixtureAbstract implements DependentFixtureInterface
         $sagas = new Page();
         $sagas->setPage($page);
         $sagas->setTitle('Mes sagas favorites');
-        $sagas->setType(PageEnum::PAGE->value);
+        $sagas->setType(PageEnum::SAGA->value);
 
         $this->addParagraphText($sagas);
         $this->paragraphService->addParagraph($sagas, 'saga');
