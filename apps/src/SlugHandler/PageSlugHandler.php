@@ -151,10 +151,10 @@ class PageSlugHandler implements SlugHandlerWithUniqueCallbackInterface
      * @param string $separator
      * @param object $object
      */
-    public function transliterate(string $text, $separator, $object): string
+    public function transliterate(?string $text, $separator, $object): string
     {
         unset($separator, $object);
-        $slug = $text . $this->suffix;
+        $slug = ($text ?? '') . $this->suffix;
 
         if (0 !== strlen($this->parentSlug)) {
             return $this->parentSlug . $this->usedPathSeparator . $slug;
