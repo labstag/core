@@ -128,8 +128,8 @@ class StoryCrudController extends CrudControllerAbstract
         $this->crudFieldFactory->addFilterTagsFor($filters, self::getEntityFqcn());
         $this->crudFieldFactory->addFilterCategoriesFor($filters, self::getEntityFqcn());
 
-                $this->crudFieldFactory->addFilterCreatedAtFor($filters, self::getEntityFqcn());
-return $filters;
+        $this->crudFieldFactory->addFilterCreatedAtFor($filters, self::getEntityFqcn());
+        return $filters;
     }
 
     public static function getEntityFqcn(): string

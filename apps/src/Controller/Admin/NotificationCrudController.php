@@ -51,6 +51,14 @@ class NotificationCrudController extends CrudControllerAbstract
     }
 
     #[Override]
+    public function configureFilters(Filters $filters): Filters
+    {
+        $this->crudFieldFactory->addFilterCreatedAtFor($filters, self::getEntityFqcn());
+
+        return $filters;
+    }
+
+    #[Override]
     public function createIndexQueryBuilder(
         SearchDto $searchDto,
         EntityDto $entityDto,
@@ -64,14 +72,6 @@ class NotificationCrudController extends CrudControllerAbstract
         $queryBuilder->setParameter('user', $user->getId());
 
         return $queryBuilder;
-    }
-
-    #[Override]
-    public function configureFilters(Filters $filters): Filters
-    {
-        $this->crudFieldFactory->addFilterCreatedAtFor($filters, self::getEntityFqcn());
-
-        return $filters;
     }
 
     public static function getEntityFqcn(): string

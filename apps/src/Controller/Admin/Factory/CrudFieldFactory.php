@@ -117,11 +117,6 @@ final class CrudFieldFactory
         $this->addFilterCategories($filters);
     }
 
-    public function addFilterEnable(Filters $filters): void
-    {
-        $filters->add(BooleanFilter::new('enable', new TranslatableMessage('Enable')));
-    }
-
     /**
      * Add createdAt filter only if the given entity actually has a Doctrine property named 'createdAt'.
      */
@@ -134,6 +129,11 @@ final class CrudFieldFactory
         }
 
         $filters->add(DateTimeFilter::new('createdAt', new TranslatableMessage('Created At')));
+    }
+
+    public function addFilterEnable(Filters $filters): void
+    {
+        $filters->add(BooleanFilter::new('enable', new TranslatableMessage('Enable')));
     }
 
     /**
