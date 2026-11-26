@@ -66,7 +66,7 @@ class DashboardMenuService
             [
                 'story',
                 $translatableStoryMessage->getMessage(),
-                'fas fa-landmark',
+                'fas fa-book',
                 StoryCrudController::class,
                 $categories,
                 $tags,
@@ -76,7 +76,7 @@ class DashboardMenuService
             [
                 'chapter',
                 $translatableChapterMessage->getMessage(),
-                'fas fa-landmark',
+                'fas fa-scroll',
                 ChapterCrudController::class,
                 null,
                 null,
@@ -102,7 +102,7 @@ class DashboardMenuService
             [
                 'serie',
                 $translatableSerieMessage->getMessage(),
-                'fas fa-film',
+                'fas fa-tv',
                 SerieCrudController::class,
                 $categories,
                 null,
@@ -110,12 +110,12 @@ class DashboardMenuService
                     MenuItem::linkTo(
                         SeasonCrudController::class,
                         $translatableSeasonMessage->getMessage(),
-                        'fas fa-video'
+                        'fas fa-calendar-alt'
                     ),
                     MenuItem::linkTo(
                         EpisodeCrudController::class,
                         $translatableEpisodeMessage->getMessage(),
-                        'fas fa-video'
+                        'fas fa-play-circle'
                     ),
                 ],
                 true,
@@ -197,7 +197,7 @@ class DashboardMenuService
             ],
             [
                 new TranslatableMessage(MemoCrudController::getEntityLabel()),
-                'fas fa-memory',
+                'fas fa-sticky-note',
                 MemoCrudController::class,
             ],
             [
@@ -207,7 +207,7 @@ class DashboardMenuService
             ],
             [
                 new TranslatableMessage(MetaCrudController::getEntityLabel()),
-                'fa fa-file-alt',
+                'fas fa-tags',
                 MetaCrudController::class,
             ],
             [
@@ -222,7 +222,7 @@ class DashboardMenuService
             ],
             [
                 new TranslatableMessage(GeoCodeCrudController::getEntityLabel()),
-                'fas fa-map-signs',
+                'fas fa-map-marker-alt',
                 GeoCodeCrudController::class,
             ],
             [
@@ -252,17 +252,17 @@ class DashboardMenuService
             ],
             [
                 new TranslatableMessage(HttpErrorLogsCrudController::getEntityLabel()),
-                'fas fa-clipboard-list',
+                'fas fa-exclamation-triangle',
                 HttpErrorLogsCrudController::class,
             ],
             [
                 new TranslatableMessage(SubmissionCrudController::getEntityLabel()),
-                'fas fa-clipboard-list',
+                'fas fa-paper-plane',
                 SubmissionCrudController::class,
             ],
             [
                 new TranslatableMessage(ConfigurationCrudController::getEntityLabel()),
-                'fas fa-clipboard-list',
+                'fas fa-cog',
                 ConfigurationCrudController::class,
             ],
         ];
