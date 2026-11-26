@@ -68,7 +68,11 @@ class MessengerController extends AbstractController
 
         return $this->render(
             'admin/messenger/index.html.twig',
-            ['rows' => $rows, 'page' => $page, 'pages' => $pages]
+            [
+                'rows' => $rows,
+                'page' => $page,
+                'pages' => $pages,
+            ]
         );
     }
 
