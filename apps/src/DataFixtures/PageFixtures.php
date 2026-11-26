@@ -103,6 +103,7 @@ class PageFixtures extends FixtureAbstract implements DependentFixtureInterface
         $page                = $this->setHome();
         $errors              = $this->setError();
         $medias              = $this->setMedias($page);
+        $sortie              = $this->setSortieSemaine($medias);
         $movies              = $this->setMovies($medias);
         $game                = $this->setGame($medias);
         $sagas               = $this->setSaga($movies);
@@ -142,6 +143,7 @@ class PageFixtures extends FixtureAbstract implements DependentFixtureInterface
             $mentions,
             $cvpage,
             $medias,
+            $sortie,
             $artists,
             $donneespersonnelles,
         ];
@@ -251,6 +253,18 @@ class PageFixtures extends FixtureAbstract implements DependentFixtureInterface
         $this->paragraphService->addParagraph($medias, 'sibling');
 
         return $medias;
+    }
+
+    private function setSortieSemaine(Page $page): Page
+    {
+        $sortie = new Page();
+        $sortie->setPage($page);
+        $sortie->setTitle('Sortie de la semaine');
+        $sortie->setType(PageEnum::PAGE->value);
+        $this->addParagraphText($sortie);
+        $this->paragraphService->addParagraph($sortie, 'sibling');
+
+        return $sortie;
     }
 
     private function setArtists(Page $page): Page
