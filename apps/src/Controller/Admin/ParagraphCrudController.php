@@ -114,6 +114,8 @@ class ParagraphCrudController extends CrudControllerAbstract
     #[Override]
     public function configureFilters(Filters $filters): Filters
     {
+        $this->crudFieldFactory->addFilterEnable($filters);
+
         $types = $this->paragraphService->getAll(null);
         if ([] == $types) {
             return $filters;
