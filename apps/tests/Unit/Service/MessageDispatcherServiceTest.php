@@ -12,26 +12,20 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\MessageBusInterface;
 
-final class FakeBus implements MessageBusInterface
-{
-
-    public int $calls = 0;
-
-    public function dispatch(object $message, array $stamps = []): Envelope
-    {
-        ++$this->calls;
-
-        return new Envelope($message);
-    }
-}
-
 final class MessageDispatcherServiceTest extends TestCase
 {
     #[Test]
     #[Group('unit')]
     public function dedupes(): void
     {
-        $bus     = new FakeBus();
+        $bus     = new class implements MessageBusInterface {
+            public int $calls = 0;
+            public function dispatch(object $message, array $stamps = []): Envelope
+            {
+                ++$this->calls;
+                return new Envelope($message);
+            }
+        };
         $service = new MessageDispatcherService($bus);
         $msg     = new stdClass();
         $service->dispatch($msg);
@@ -43,7 +37,14 @@ final class MessageDispatcherServiceTest extends TestCase
     #[Group('unit')]
     public function dispatchCallsBus(): void
     {
-        $bus     = new FakeBus();
+        $bus     = new class implements MessageBusInterface {
+            public int $calls = 0;
+            public function dispatch(object $message, array $stamps = []): Envelope
+            {
+                ++$this->calls;
+                return new Envelope($message);
+            }
+        };
         $service = new MessageDispatcherService($bus);
         $service->dispatch(new stdClass());
         $this->assertSame(1, $bus->calls);
@@ -53,7 +54,14 @@ final class MessageDispatcherServiceTest extends TestCase
     #[Group('unit')]
     public function stats(): void
     {
-        $bus     = new FakeBus();
+        $bus     = new class implements MessageBusInterface {
+            public int $calls = 0;
+            public function dispatch(object $message, array $stamps = []): Envelope
+            {
+                ++$this->calls;
+                return new Envelope($message);
+            }
+        };
         $service = new MessageDispatcherService($bus);
         $service->dispatch(new stdClass());
         $this->assertNotEmpty($service->getDispatchStats());
