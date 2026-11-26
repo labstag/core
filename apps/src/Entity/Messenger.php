@@ -2,15 +2,14 @@
 
 namespace Labstag\Entity;
 
-use Doctrine\DBAL\Types\Types;
 use DateTimeImmutable;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Uid\Ulid;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'messenger')]
 #[ORM\Index(name: 'idx_messenger_correlation', columns: ['correlation_id'])]
-#[ORM\Index(name: 'idx_messenger_transport', columns: ['transport'])]
 #[ORM\Index(name: 'idx_messenger_message_class', columns: ['message_class'])]
 #[ORM\Index(name: 'idx_messenger_status', columns: ['status'])]
 #[ORM\Index(name: 'idx_messenger_dispatched', columns: ['dispatched_at'])]
@@ -68,8 +67,8 @@ class Messenger
     #[ORM\Column(type: Types::STRING, length: 16)]
     private string $status = self::STATUS_PENDING;
 
-    #[ORM\Column(type: Types::STRING, length: 64)]
-    private string $transport;
+    #[ORM\Column(type: Types::JSON, nullable: true)]
+    private ?array $transports = null;
 
     public function __construct()
     {
@@ -148,9 +147,9 @@ class Messenger
         return $this->status;
     }
 
-    public function getTransport(): string
+    public function getTransports(): ?array
     {
-        return $this->transport;
+        return $this->transports;
     }
 
     public function incrementRetryCount(): self
@@ -237,9 +236,9 @@ class Messenger
         return $this;
     }
 
-    public function setTransport(string $transport): self
+    public function setTransports(?array $transports): self
     {
-        $this->transport = $transport;
+        $this->transports = $transports;
         return $this;
     }
 }

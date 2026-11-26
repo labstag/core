@@ -31,26 +31,79 @@ class WorkerSupervisionSubscriber implements EventSubscriberInterface
 
     public function onFailed(WorkerMessageFailedEvent $event): void
     {
-    }
-
-    public function onHandled(WorkerMessageHandledEvent $event): void
-    {
-    }
-
-    public function onStarted(WorkerStartedEvent $event): void
-    {
-        $this->cache->get(
-            'worker_' . spl_object_id($event->getWorker()),
+        $worker = $event->getWorker();
+        $key    = $this->key($worker);
+        $data   = $this->cache->get(
+            $key,
             fn (): array => [
                 'startedAt' => time(),
                 'handled'   => 0,
                 'failed'    => 0,
+                'stopped'   => false,
+            ]
+        );
+        $data['failed']++;
+        $data['lastActivityAt'] = time();
+        $this->cache->delete($key);
+        $this->cache->get($key, fn (): array => $data);
+    }
+
+    public function onHandled(WorkerMessageHandledEvent $event): void
+    {
+        $worker = $event->getWorker();
+        $key    = $this->key($worker);
+        $data   = $this->cache->get(
+            $key,
+            fn (): array => [
+                'startedAt' => time(),
+                'handled'   => 0,
+                'failed'    => 0,
+                'stopped'   => false,
+            ]
+        );
+        $data['handled']++;
+        $data['lastActivityAt'] = time();
+        $this->cache->delete($key);
+        $this->cache->get($key, fn (): array => $data);
+    }
+
+    public function onStarted(WorkerStartedEvent $event): void
+    {
+        $worker = $event->getWorker();
+        $key    = $this->key($worker);
+        $this->cache->get(
+            $key,
+            fn (): array => [
+                'startedAt'      => time(),
+                'handled'        => 0,
+                'failed'         => 0,
+                'stopped'        => false,
+                'lastActivityAt' => time(),
             ]
         );
     }
 
     public function onStopped(WorkerStoppedEvent $event): void
     {
-        // passive: nothing to do
+        $worker = $event->getWorker();
+        $key    = $this->key($worker);
+        $data   = $this->cache->get(
+            $key,
+            fn (): array => [
+                'startedAt' => time(),
+                'handled'   => 0,
+                'failed'    => 0,
+                'stopped'   => false,
+            ]
+        );
+        $data['stopped']   = true;
+        $data['stoppedAt'] = time();
+        $this->cache->delete($key);
+        $this->cache->get($key, fn (): array => $data);
+    }
+
+    private function key(object $worker): string
+    {
+        return 'worker_' . getmypid() . '_' . spl_object_id($worker);
     }
 }

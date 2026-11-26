@@ -6,23 +6,39 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use Labstag\Controller\Admin\CrudControllerAbstract;
+use EasyCorp\Bundle\EasyAdminBundle\Field\ArrayField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use Symfony\Component\Translation\TranslatableMessage;
 use Labstag\Entity\Messenger;
 
-class MessengerCrudController extends AbstractCrudController
+class MessengerCrudController extends CrudControllerAbstract
 {
     public function configureActions(Actions $actions): Actions
     {
         return $actions->disable(Action::NEW)->disable(Action::EDIT)->add(Crud::PAGE_INDEX, Action::DETAIL);
     }
 
+    public function configureCrud(Crud $crud): Crud
+    {
+        $crud = parent::configureCrud($crud);
+        $crud->setEntityLabelInSingular(new TranslatableMessage('Message'));
+        $crud->setEntityLabelInPlural(new TranslatableMessage('Messages'));
+        $crud->setDefaultSort(
+            ['dispatchedAt' => 'DESC']
+        );
+
+        return $crud;
+    }
+
     public function configureFields(string $pageName): iterable
     {
-        yield TextField::new('messageClass');
-        yield TextField::new('transport');
-        yield TextField::new('status')->formatValue(
+        yield TextField::new('messageClass', new TranslatableMessage('Message Class'));
+        yield ArrayField::new('transports', new TranslatableMessage('Transports'));
+        yield ArrayField::new('headers', new TranslatableMessage('Headers'))->onlyOnDetail();
+        yield TextField::new('status', new TranslatableMessage('Status'))->formatValue(
             function ($value): string {
                 $colors = [
                     'pending'    => 'warning',
@@ -35,11 +51,11 @@ class MessengerCrudController extends AbstractCrudController
                 return sprintf('<span class="badge bg-%s">%s</span>', $color, $value);
             }
         )->renderAsHtml();
-        yield IntegerField::new('retryCount');
-        yield DateTimeField::new('dispatchedAt');
-        yield DateTimeField::new('startedAt');
-        yield DateTimeField::new('finishedAt');
-        yield IntegerField::new('durationMs');
+        yield IntegerField::new('retryCount', new TranslatableMessage('Retry Count'));
+        yield DateTimeField::new('dispatchedAt', new TranslatableMessage('Dispatched At'));
+        yield DateTimeField::new('startedAt', new TranslatableMessage('Started At'));
+        yield DateTimeField::new('finishedAt', new TranslatableMessage('Finished At'));
+        yield IntegerField::new('durationMs', new TranslatableMessage('Duration Ms'));
     }
 
     public static function getEntityFqcn(): string

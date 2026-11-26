@@ -2501,6 +2501,46 @@
         <source>Delete</source>
         <target>Supprimer</target>
       </trans-unit>
+      <trans-unit id="ZIWxAxP" resname="Messenger Inspector">
+        <source>Messenger Inspector</source>
+        <target>__Messenger Inspector</target>
+      </trans-unit>
+      <trans-unit id="hdr0001" resname="Headers">
+        <source>Headers</source>
+        <target>En-têtes</target>
+      </trans-unit>
+      <trans-unit id="msg0001" resname="Message Class">
+        <source>Message Class</source>
+        <target>Classe du message</target>
+      </trans-unit>
+      <trans-unit id="msg0002" resname="Retry Count">
+        <source>Retry Count</source>
+        <target>Nombre de tentatives</target>
+      </trans-unit>
+      <trans-unit id="msg0003" resname="Dispatched At">
+        <source>Dispatched At</source>
+        <target>Envoyé le</target>
+      </trans-unit>
+      <trans-unit id="msg0004" resname="Started At">
+        <source>Started At</source>
+        <target>Démarré le</target>
+      </trans-unit>
+      <trans-unit id="msg0005" resname="Finished At">
+        <source>Finished At</source>
+        <target>Terminé le</target>
+      </trans-unit>
+      <trans-unit id="msg0006" resname="Duration Ms">
+        <source>Duration Ms</source>
+        <target>Durée (ms)</target>
+      </trans-unit>
+      <trans-unit id="msg0007" resname="Transports">
+        <source>Transports</source>
+        <target>Transports</target>
+      </trans-unit>
+      <trans-unit id="msg0008" resname="Status">
+        <source>Status</source>
+        <target>Statut</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

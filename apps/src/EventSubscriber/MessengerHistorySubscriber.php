@@ -3,16 +3,16 @@
 namespace Labstag\EventSubscriber;
 
 use DateTimeImmutable;
-use Symfony\Component\Messenger\Envelope;
-use Throwable;
 use Doctrine\ORM\EntityManagerInterface;
 use Labstag\Entity\Messenger as MessengerEntity;
 use Labstag\Messenger\Stamp\CorrelationIdStamp;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\Event\MessageSentToTransportsEvent;
 use Symfony\Component\Messenger\Event\WorkerMessageFailedEvent;
 use Symfony\Component\Messenger\Event\WorkerMessageHandledEvent;
+use Throwable;
 
 class MessengerHistorySubscriber implements EventSubscriberInterface
 {
@@ -79,32 +79,33 @@ class MessengerHistorySubscriber implements EventSubscriberInterface
     {
         $stamp         = $event->getEnvelope()->last(CorrelationIdStamp::class);
         $correlationId = $stamp instanceof CorrelationIdStamp ? $stamp->correlationId : null;
-        foreach (array_keys($event->getSenders()) as $transport) {
-            $existing = null;
-            if ($correlationId) {
-                $existing = $this->em->getRepository(MessengerEntity::class)->findOneBy(
-                    [
-                        'correlationId' => $correlationId,
-                        'transport'     => $transport,
-                    ]
-                );
-            }
-
-            if ($existing instanceof MessengerEntity) {
-                continue;
-            }
-
-            $row = new MessengerEntity();
-            if ($correlationId) {
-                $row->setCorrelationId($correlationId);
-            }
-
-            $row->setTransport($transport);
-            $row->setMessageClass($event->getEnvelope()->getMessage()::class);
-            $row->setStatus(MessengerEntity::STATUS_PENDING);
-            $this->em->persist($row);
+        $transports    = array_keys($event->getSenders());
+        $existing      = null;
+        if ($correlationId) {
+            $existing = $this->em->getRepository(MessengerEntity::class)->findOneBy(
+                ['correlationId' => $correlationId]
+            );
         }
 
+        if ($existing instanceof MessengerEntity) {
+            $merged = array_values(array_unique(array_merge($existing->getTransports() ?? [], $transports)));
+            $existing->setTransports($merged);
+            $this->flush();
+            return;
+        }
+
+        $row = new MessengerEntity();
+        if ($correlationId) {
+            $row->setCorrelationId($correlationId);
+        }
+
+        $row->setTransports($transports);
+        $row->setMessageClass($event->getEnvelope()->getMessage()::class);
+        $row->setStatus(MessengerEntity::STATUS_PENDING);
+        $message = $event->getEnvelope()->getMessage();
+        $row->setPayload($this->mask($this->toArray($message)));
+        $row->setHeaders($this->mask($this->headers($event->getEnvelope())));
+        $this->em->persist($row);
         $this->flush();
     }
 
@@ -133,5 +134,52 @@ class MessengerHistorySubscriber implements EventSubscriberInterface
                 $this->logger->error($throwable->getMessage());
             }
         }
+    }
+
+    private function headers(Envelope $envelope): array
+    {
+        $result = [];
+        foreach ($envelope->all() as $stamps) {
+            foreach ($stamps as $stamp) {
+                $result[] = $stamp::class;
+            }
+        }
+
+        return $result;
+    }
+
+    private function mask(mixed $value): mixed
+    {
+        if (is_array($value)) {
+            $out = [];
+            foreach ($value as $k => $v) {
+                if (is_string($k) && preg_match('/pass|token|secret|key/i', $k)) {
+                    $out[$k] = '***';
+                } else {
+                    $out[$k] = $this->mask($v);
+                }
+            }
+
+            return $out;
+        }
+
+        return $value;
+    }
+
+    private function toArray(mixed $value): mixed
+    {
+        if (is_object($value)) {
+            if (method_exists($value, 'toArray')) {
+                return $value->toArray();
+            }
+
+            if ($value instanceof \JsonSerializable) {
+                return $value->jsonSerialize();
+            }
+
+            return get_object_vars($value);
+        }
+
+        return $value;
     }
 }
