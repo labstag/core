@@ -31,8 +31,7 @@ class WorkerSupervisionSubscriber implements EventSubscriberInterface
 
     public function onFailed(WorkerMessageFailedEvent $event): void
     {
-        $worker = $event->getWorker();
-        $key    = $this->key($worker);
+        $key    = $this->key();
         $data   = $this->cache->get(
             $key,
             fn (): array => [
@@ -50,8 +49,7 @@ class WorkerSupervisionSubscriber implements EventSubscriberInterface
 
     public function onHandled(WorkerMessageHandledEvent $event): void
     {
-        $worker = $event->getWorker();
-        $key    = $this->key($worker);
+        $key    = $this->key();
         $data   = $this->cache->get(
             $key,
             fn (): array => [
@@ -69,8 +67,7 @@ class WorkerSupervisionSubscriber implements EventSubscriberInterface
 
     public function onStarted(WorkerStartedEvent $event): void
     {
-        $worker = $event->getWorker();
-        $key    = $this->key($worker);
+        $key    = $this->key();
         $this->cache->get(
             $key,
             fn (): array => [
@@ -85,8 +82,7 @@ class WorkerSupervisionSubscriber implements EventSubscriberInterface
 
     public function onStopped(WorkerStoppedEvent $event): void
     {
-        $worker = $event->getWorker();
-        $key    = $this->key($worker);
+        $key    = $this->key();
         $data   = $this->cache->get(
             $key,
             fn (): array => [
@@ -102,8 +98,8 @@ class WorkerSupervisionSubscriber implements EventSubscriberInterface
         $this->cache->get($key, fn (): array => $data);
     }
 
-    private function key(object $worker): string
+    private function key(): string
     {
-        return 'worker_' . getmypid() . '_' . spl_object_id($worker);
+        return 'worker_' . getmypid();
     }
 }
