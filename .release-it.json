@@ -13,7 +13,6 @@
   "hooks": {
     "before:init": [
       "git pull",
-      "task lint:all SKIP_DOCKER=true"
     ],
     "after:bump": "npx auto-changelog -p",
     "after:release": "task labstag:docker:image"
