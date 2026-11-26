@@ -32,6 +32,7 @@ class AddPagesCommand
             $home = new Page();
             $home->setType(PageEnum::HOME->value);
             $home->setTitle('Accueil');
+            $home->setSlug('home');
             $this->pageRepository->save($home);
         }
 
@@ -60,6 +61,7 @@ class AddPagesCommand
         $page = new Page();
         $page->setType($case);
         $this->setTitle($page, $case);
+        $page->setSlug($case);
         $this->setData($page, $case);
         $this->setHide($page, $case);
         $page->setPage($home);
