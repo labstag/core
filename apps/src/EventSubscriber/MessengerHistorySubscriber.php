@@ -72,7 +72,7 @@ class MessengerHistorySubscriber implements EventSubscriberInterface
         $row->setExceptionMessage(null);
 
         $now = new DateTimeImmutable();
-        $row->setExpiresAt($now->modify('+7 days'));
+        $row->setExpiresAt($now->modify('+5 minutes'));
         $this->flush();
     }
 

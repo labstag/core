@@ -4,6 +4,7 @@ namespace Labstag\Scheduler;
 
 use Labstag\Message\BanIpMessage;
 use Labstag\Message\DeleteOldFileMessage;
+use Labstag\Message\MessengerCleanupHistoryMessage;
 use Labstag\Message\NotificationMessage;
 use Labstag\Message\UpdatePersonMessage;
 use Labstag\Message\UpdatePersonsMessage;
@@ -33,6 +34,7 @@ final class CronSchedule implements ScheduleProviderInterface
             RecurringMessage::cron('0 2 * * *', new UpdatePersonsMessage()),
             RecurringMessage::cron('0 12 * * *', new NotificationMessage()),
             RecurringMessage::cron('0 0 * * 6', new DeleteOldFileMessage()),
+            RecurringMessage::cron('*/5 * * * *', new MessengerCleanupHistoryMessage()),
             // RecurringMessage::cron('0 20 * * *', new MetaAllMessage()),
         );
         $schedule->stateful($this->cache);
