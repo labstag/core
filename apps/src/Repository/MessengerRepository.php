@@ -63,4 +63,21 @@ class MessengerRepository extends ServiceEntityRepository
             ['status' => $status]
         );
     }
+
+    public function findDistinctMessageClasses(): array
+    {
+        $rows = $this->createQueryBuilder('m')
+            ->select('DISTINCT m.messageClass AS c')
+            ->getQuery()
+            ->getSingleColumnResult();
+
+        $choices = [];
+        foreach ($rows as $class) {
+            if (is_string($class) && '' !== $class) {
+                $choices[$class] = $class;
+            }
+        }
+
+        return $choices;
+    }
 }
