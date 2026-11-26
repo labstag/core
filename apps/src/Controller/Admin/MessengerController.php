@@ -42,22 +42,6 @@ class MessengerController extends AbstractController
         return $this->redirectToRoute('admin_messenger_index');
     }
 
-    #[Route('/bulk-delete', name: 'admin_messenger_bulk_delete', methods: ['POST'])]
-    public function bulkDelete(Request $request): Response
-    {
-        $ids = array_filter(array_map('intval', (array) $request->request->all('ids')));
-        if ($ids) {
-            $placeholders = implode(',', array_fill(0, count($ids), '?'));
-            $this->connection()->executeStatement(
-                "DELETE FROM messenger_messages WHERE id IN ($placeholders)",
-                array_values($ids)
-            );
-            $this->addFlash('success', new TranslatableMessage('Messages deleted.'));
-        }
-
-        return $this->redirectToRoute('admin_messenger_index');
-    }
-
     #[Route('', name: 'admin_messenger_index')]
     public function index(Request $request): Response
     {
