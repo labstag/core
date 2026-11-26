@@ -63,7 +63,10 @@ class MessengerCrudController extends CrudControllerAbstract
     #[Override]
     public function configureFilters(Filters $filters): Filters
     {
-        $filters->add('messageClass');
+        $filters->add(
+            ChoiceFilter::new('messageClass', new TranslatableMessage('Message Class'))
+                ->setChoices($this->getRepository()->findDistinctMessageClasses())
+        );
         $filters->add(
             ChoiceFilter::new('status', new TranslatableMessage('Status'))
                 ->setChoices([
