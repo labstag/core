@@ -16,6 +16,8 @@ use Throwable;
 #[Route('/admin/messenger')]
 class MessengerController extends AbstractController
 {
+    private const PER_PAGE = 25;
+
     public function __construct(
         protected EntityManagerInterface $entityManager,
         protected AdminContextFactory $adminContextFactory,
@@ -50,17 +52,23 @@ class MessengerController extends AbstractController
         $context = $this->adminContextFactory->create($request, $this->dashboardController, null);
         $request->attributes->set('ea', $context);
 
+        $page = max(1, (int) $request->query->get('page', 1));
         try {
+            $total = (int) $this->connection()->fetchOne('SELECT COUNT(*) FROM messenger_messages');
             $rows = $this->connection()->fetchAllAssociative(
-                'SELECT id, queue_name, body, created_at, available_at, delivered_at FROM messenger_messages ORDER BY created_at DESC'
+                'SELECT id, queue_name, body, created_at, available_at, delivered_at FROM messenger_messages ORDER BY created_at DESC LIMIT ? OFFSET ?',
+                [self::PER_PAGE, ($page - 1) * self::PER_PAGE]
             );
         } catch (Throwable) {
+            $total = 0;
             $rows = [];
         }
 
+        $pages = max(1, (int) ceil($total / self::PER_PAGE));
+
         return $this->render(
             'admin/messenger/index.html.twig',
-            ['rows' => $rows]
+            ['rows' => $rows, 'page' => $page, 'pages' => $pages]
         );
     }
 

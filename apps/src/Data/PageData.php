@@ -31,7 +31,7 @@ class PageData extends HomeData implements DataInterface
     }
 
     #[Override]
-    public function getEntity(?string $slug): object
+    public function getEntity(?string $slug): ?object
     {
         return $this->getEntityBySlugPage($slug);
     }

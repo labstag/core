@@ -12,7 +12,7 @@ interface DataInterface
 
     public function generateSlug(object $entity): array;
 
-    public function getEntity(?string $slug): object;
+    public function getEntity(?string $slug): ?object;
 
     public function getTitle(object $entity): string;
 
