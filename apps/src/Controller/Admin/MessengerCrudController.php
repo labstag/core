@@ -63,9 +63,19 @@ class MessengerCrudController extends CrudControllerAbstract
     #[Override]
     public function configureFilters(Filters $filters): Filters
     {
+        $entityManager = $this->managerRegistry->getManagerForClass(Messenger::class);
+        $classes       = $entityManager->createQuery(
+            'SELECT DISTINCT m.messageClass FROM ' . Messenger::class . ' m'
+        )->getSingleColumnResult();
+        $choices = [];
+        foreach ($classes as $class) {
+            if (is_string($class) && '' !== $class) {
+                $choices[$class] = $class;
+            }
+        }
         $filters->add(
             ChoiceFilter::new('messageClass', new TranslatableMessage('Message Class'))
-                ->setChoices($this->getRepository()->findDistinctMessageClasses())
+                ->setChoices($choices)
         );
         $filters->add(
             ChoiceFilter::new('status', new TranslatableMessage('Status'))
