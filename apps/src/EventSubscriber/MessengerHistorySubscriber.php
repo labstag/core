@@ -2,9 +2,9 @@
 
 namespace Labstag\EventSubscriber;
 
-use JsonSerializable;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
+use JsonSerializable;
 use Labstag\Entity\Messenger as MessengerEntity;
 use Labstag\Messenger\Stamp\CorrelationIdStamp;
 use Psr\Log\LoggerInterface;
