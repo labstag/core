@@ -41,7 +41,8 @@ class SagaSlugHandler implements SlugHandlerInterface
         $objectRepository = $objectManager->getRepository(Saga::class);
 
         $asciiSlugger = new AsciiSlugger();
-        $slug         = $asciiSlugger->slug((string) $object->getTitle())->lower();
+        $title        = str_ireplace('saga', '', (string) $object->getTitle());
+        $slug         = $asciiSlugger->slug($title)->lower();
 
         $originalSlug = $slug;
 

@@ -153,10 +153,7 @@ class PageSlugHandler implements SlugHandlerWithUniqueCallbackInterface
      */
     public function transliterate(?string $text, $separator, $object): string
     {
-        unset($separator);
-        if ($object instanceof \Labstag\Entity\Page && PageEnum::SAGA->value === $object->getType()) {
-            $text = str_ireplace('saga', '', (string) $text);
-        }
+        unset($separator, $object);
         $slug = ($text ?? '') . $this->suffix;
 
         if (0 !== strlen((string) $this->parentSlug)) {
