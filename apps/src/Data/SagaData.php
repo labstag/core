@@ -32,7 +32,7 @@ class SagaData extends PageData implements DataInterface
     {
         $page = $this->entityManager->getRepository(Page::class)->findOneBy(
             [
-                'type' => PageEnum::MOVIES->value,
+                'type' => PageEnum::SAGA->value,
             ]
         );
 
@@ -170,7 +170,7 @@ class SagaData extends PageData implements DataInterface
             return null;
         }
 
-        if ($page->getType() != PageEnum::MOVIES->value) {
+        if ($page->getType() != PageEnum::SAGA->value) {
             return null;
         }
 
