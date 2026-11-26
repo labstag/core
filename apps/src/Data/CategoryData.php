@@ -56,7 +56,7 @@ class CategoryData extends DataAbstract implements DataInterface
     }
 
     #[Override]
-    public function getTitle(object $entity): string
+    public function getTitle(?object $entity): string
     {
         unset($entity);
         $request  = $this->requestStack->getCurrentRequest();

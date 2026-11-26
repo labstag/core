@@ -58,7 +58,7 @@ abstract class DataAbstract
         return [];
     }
 
-    public function getTitle(object $entity): string
+    public function getTitle(?object $entity): string
     {
         unset($entity);
 
