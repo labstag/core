@@ -111,6 +111,7 @@ class PageFixtures extends FixtureAbstract implements DependentFixtureInterface
         $post                = $this->setPost($page);
         $star                = $this->setStar($page);
         $info                = $this->setInformations($page);
+        $medias              = $this->setMedias($page);
         $changepassword      = $this->setChangePassword($page);
         $login               = $this->setLogin($page);
         $lostpassword        = $this->setLostPassword($page);
@@ -133,6 +134,7 @@ class PageFixtures extends FixtureAbstract implements DependentFixtureInterface
             $sagas,
             $star,
             $info,
+            $medias,
             $contact,
             $sitemap,
             $mentions,
@@ -233,6 +235,18 @@ class PageFixtures extends FixtureAbstract implements DependentFixtureInterface
         $this->paragraphService->addParagraph($info, 'sibling');
 
         return $info;
+    }
+
+    private function setMedias(Page $page): Page
+    {
+        $medias = new Page();
+        $medias->setPage($page);
+        $medias->setTitle('Médias');
+        $medias->setType(PageEnum::PAGE->value);
+        $this->addParagraphText($medias);
+        $this->paragraphService->addParagraph($medias, 'sibling');
+
+        return $medias;
     }
 
     private function setLogin(Page $page): Page
