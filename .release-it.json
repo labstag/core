@@ -12,7 +12,7 @@
   },
   "hooks": {
     "before:init": [
-      "git pull",
+      "git pull"
     ],
     "after:bump": "npx auto-changelog -p",
     "after:release": "task labstag:docker:image"
