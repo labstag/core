@@ -68,7 +68,7 @@ vich_uploader:
       namer:
         service: Vich\UploaderBundle\Naming\PropertyNamer
         options:
-          property: tmdb
+          property: title
           transliterate: true
       inject_on_load: false
       delete_on_update: true
@@ -99,7 +99,10 @@ vich_uploader:
       uri_prefix: /uploads/serie
       upload_destination: serie.storage
       namer:
-        service: Vich\UploaderBundle\Naming\OrignameNamer
+        service: Vich\UploaderBundle\Naming\PropertyNamer
+        options:
+          property: slug
+          transliterate: true
       inject_on_load: false
       delete_on_update: true
       delete_on_remove: true
@@ -107,7 +110,10 @@ vich_uploader:
       uri_prefix: /uploads/season
       upload_destination: season.storage
       namer:
-        service: Vich\UploaderBundle\Naming\SmartUniqueNamer
+        service: Vich\UploaderBundle\Naming\PropertyNamer
+        options:
+          property: slug
+          transliterate: true
       inject_on_load: false
       delete_on_update: true
       delete_on_remove: true
@@ -115,7 +121,10 @@ vich_uploader:
       uri_prefix: /uploads/movie
       upload_destination: movie.storage
       namer:
-        service: Vich\UploaderBundle\Naming\SmartUniqueNamer
+        service: Vich\UploaderBundle\Naming\PropertyNamer
+        options:
+          property: slug
+          transliterate: true
       inject_on_load: false
       delete_on_update: true
       delete_on_remove: true
@@ -123,7 +132,10 @@ vich_uploader:
       uri_prefix: /uploads/saga
       upload_destination: saga.storage
       namer:
-        service: Vich\UploaderBundle\Naming\SmartUniqueNamer
+        service: Vich\UploaderBundle\Naming\PropertyNamer
+        options:
+          property: slug
+          transliterate: true
       inject_on_load: false
       delete_on_update: true
       delete_on_remove: true
