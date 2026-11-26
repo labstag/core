@@ -57,7 +57,10 @@ class MessengerController extends AbstractController
             $total = (int) $this->connection()->fetchOne('SELECT COUNT(*) FROM messenger_messages');
             $rows = $this->connection()->fetchAllAssociative(
                 'SELECT id, queue_name, body, created_at, available_at, delivered_at FROM messenger_messages ORDER BY created_at DESC LIMIT ? OFFSET ?',
-                [self::PER_PAGE, ($page - 1) * self::PER_PAGE]
+                [
+                    self::PER_PAGE,
+                    ($page - 1) * self::PER_PAGE,
+                ]
             );
         } catch (Throwable) {
             $total = 0;
