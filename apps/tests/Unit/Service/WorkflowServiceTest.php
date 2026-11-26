@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Labstag\Tests\Unit\Service;
 
-use stdClass;
 use Doctrine\ORM\EntityManagerInterface;
 use Labstag\Service\WorkflowService;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
+use stdClass;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Workflow\Registry;
 

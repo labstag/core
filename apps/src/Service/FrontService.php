@@ -47,6 +47,10 @@ class FrontService extends AbstractController
             [
                 'type' => PageEnum::ERRORS->value,
             ]
+        ) ?? $entityRepository->findOneBy(
+            [
+                'slug' => PageEnum::ERRORS->value,
+            ]
         );
         if (!$page instanceof Page) {
             $page = new Page();

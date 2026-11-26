@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Labstag\Tests\Unit\Service\File;
 
-use stdClass;
 use Labstag\Service\File\FileStorageService;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
+use stdClass;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Vich\UploaderBundle\Mapping\PropertyMappingFactoryInterface;
 

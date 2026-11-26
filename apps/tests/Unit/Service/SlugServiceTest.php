@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace Labstag\Tests\Unit\Service;
 
-use stdClass;
-use Labstag\Repository\PageRepository;
 use InvalidArgumentException;
 use Labstag\Data\DataInterface;
+use Labstag\Repository\PageRepository;
 use Labstag\Service\SlugService;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
+use stdClass;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 final class SlugServiceTest extends TestCase

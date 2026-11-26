@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Labstag\Tests\Unit\Service;
 
-use Symfony\Component\Mailer\MailerInterface;
 use Labstag\Service\EmailService;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Mailer\MailerInterface;
 
 final class EmailServiceTest extends TestCase
 {

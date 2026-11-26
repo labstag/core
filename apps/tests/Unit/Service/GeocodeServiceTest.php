@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Labstag\Tests\Unit\Service;
 
-use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Labstag\Service\GeocodeService;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 final class GeocodeServiceTest extends TestCase
 {

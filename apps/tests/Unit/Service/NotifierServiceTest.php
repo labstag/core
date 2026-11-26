@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Labstag\Tests\Unit\Service;
 
-use Symfony\Component\Notifier\ChatterInterface;
-use Psr\Log\LoggerInterface;
 use Labstag\Service\NotifierService;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
+use Symfony\Component\Notifier\ChatterInterface;
 
 final class NotifierServiceTest extends TestCase
 {
