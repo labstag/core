@@ -73,7 +73,7 @@ class PageFixtures extends FixtureAbstract implements DependentFixtureInterface
     {
         $sagas = new Page();
         $sagas->setPage($page);
-        $sagas->setTitle('Ma ludothèque');
+        $sagas->setTitle('Ludothèque');
         $sagas->setType(PageEnum::GAMES->value);
 
         $this->addParagraphText($sagas);
@@ -87,7 +87,7 @@ class PageFixtures extends FixtureAbstract implements DependentFixtureInterface
         $sagas = new Page();
         $sagas->setPage($page);
         $sagas->setTitle('Mes sagas favorites');
-        $sagas->setType(PageEnum::PAGE->value);
+        $sagas->setType(PageEnum::SAGA->value);
 
         $this->addParagraphText($sagas);
         $this->paragraphService->addParagraph($sagas, 'saga');
@@ -102,15 +102,19 @@ class PageFixtures extends FixtureAbstract implements DependentFixtureInterface
     {
         $page                = $this->setHome();
         $errors              = $this->setError();
-        $movies              = $this->setMovies($page);
-        $game                = $this->setGame($page);
+        $medias              = $this->setMedias($page);
+        $sortie              = $this->setSortieSemaine($medias);
+        $movies              = $this->setMovies($medias);
+        $game                = $this->setGame($medias);
         $sagas               = $this->setSaga($movies);
         $cvpage              = $this->setCv($page);
-        $series              = $this->setSeries($page);
+        $series              = $this->setSeries($medias);
+        $artists             = $this->setArtists($medias);
         $stories             = $this->setStories($page);
         $post                = $this->setPost($page);
         $star                = $this->setStar($page);
         $info                = $this->setInformations($page);
+        $medias              = $this->setMedias($page);
         $changepassword      = $this->setChangePassword($page);
         $login               = $this->setLogin($page);
         $lostpassword        = $this->setLostPassword($page);
@@ -133,10 +137,14 @@ class PageFixtures extends FixtureAbstract implements DependentFixtureInterface
             $sagas,
             $star,
             $info,
+            $medias,
             $contact,
             $sitemap,
             $mentions,
             $cvpage,
+            $medias,
+            $sortie,
+            $artists,
             $donneespersonnelles,
         ];
     }
@@ -233,6 +241,45 @@ class PageFixtures extends FixtureAbstract implements DependentFixtureInterface
         $this->paragraphService->addParagraph($info, 'sibling');
 
         return $info;
+    }
+
+    private function setMedias(Page $page): Page
+    {
+        $medias = new Page();
+        $medias->setPage($page);
+        $medias->setTitle('Médias');
+        $medias->setType(PageEnum::PAGE->value);
+        $this->addParagraphText($medias);
+        $this->paragraphService->addParagraph($medias, 'sibling');
+
+        return $medias;
+    }
+
+    private function setSortieSemaine(Page $page): Page
+    {
+        $sortie = new Page();
+        $sortie->setPage($page);
+        $sortie->setTitle('Sortie de la semaine');
+        $sortie->setType(PageEnum::PAGE->value);
+        $this->addParagraphText($sortie);
+        $this->paragraphService->addParagraph($sortie, 'sibling');
+
+        return $sortie;
+    }
+
+    private function setArtists(Page $page): Page
+    {
+        $artists = new Page();
+        $artists->setPage($page);
+        $artists->setTitle('Artistes');
+        $artists->setType(PageEnum::PERSONS->value);
+        $this->addParagraphText($artists);
+        $paragraph = $this->paragraphService->addParagraph($artists, 'person');
+        if ($paragraph instanceof PersonParagraph) {
+            $paragraph->setNbr(18);
+        }
+
+        return $artists;
     }
 
     private function setLogin(Page $page): Page

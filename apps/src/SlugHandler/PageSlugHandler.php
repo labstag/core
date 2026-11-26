@@ -45,7 +45,7 @@ class PageSlugHandler implements SlugHandlerWithUniqueCallbackInterface
     /**
      * Transliterated parent slug.
      */
-    private string $parentSlug = '';
+    private ?string $parentSlug = '';
 
     private string $prefix = '';
 
@@ -136,7 +136,7 @@ class PageSlugHandler implements SlugHandlerWithUniqueCallbackInterface
         $parent  = $wrapper->getPropertyValue($options['parentRelationField']);
         if ($parent) {
             $parent           = AbstractWrapper::wrap($parent, $this->objectManager);
-            $this->parentSlug = $parent->getPropertyValue($config['slug']);
+            $this->parentSlug = (string) ($parent->getPropertyValue($config['slug']) ?? '');
             // if needed, remove suffix from parentSlug, so we can use it to prepend it to our slug
             if (isset($options['suffix'])) {
                 $this->parentSlug = u($this->parentSlug)->trimSuffix($options['suffix'])->toString();
@@ -156,7 +156,7 @@ class PageSlugHandler implements SlugHandlerWithUniqueCallbackInterface
         unset($separator, $object);
         $slug = ($text ?? '') . $this->suffix;
 
-        if (0 !== strlen($this->parentSlug)) {
+        if (0 !== strlen((string) $this->parentSlug)) {
             return $this->parentSlug . $this->usedPathSeparator . $slug;
         }
 
