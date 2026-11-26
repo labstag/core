@@ -6,6 +6,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
+use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ArrayField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
@@ -62,7 +63,15 @@ class MessengerCrudController extends CrudControllerAbstract
     public function configureFilters(Filters $filters): Filters
     {
         $filters->add('messageClass');
-        $filters->add('status');
+        $filters->add(
+            ChoiceFilter::new('status', new TranslatableMessage('Status'))
+                ->setChoices([
+                    'pending'    => 'pending',
+                    'processing' => 'processing',
+                    'success'    => 'success',
+                    'failed'     => 'failed',
+                ])
+        );
         $filters->add('retryCount');
         $filters->add('transports');
         $filters->add('dispatchedAt');
