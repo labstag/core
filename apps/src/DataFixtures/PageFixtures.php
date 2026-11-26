@@ -102,11 +102,13 @@ class PageFixtures extends FixtureAbstract implements DependentFixtureInterface
     {
         $page                = $this->setHome();
         $errors              = $this->setError();
-        $movies              = $this->setMovies($page);
-        $game                = $this->setGame($page);
+        $medias              = $this->setMedias($page);
+        $movies              = $this->setMovies($medias);
+        $game                = $this->setGame($medias);
         $sagas               = $this->setSaga($movies);
         $cvpage              = $this->setCv($page);
-        $series              = $this->setSeries($page);
+        $series              = $this->setSeries($medias);
+        $artists             = $this->setArtists($medias);
         $stories             = $this->setStories($page);
         $post                = $this->setPost($page);
         $star                = $this->setStar($page);
@@ -139,6 +141,8 @@ class PageFixtures extends FixtureAbstract implements DependentFixtureInterface
             $sitemap,
             $mentions,
             $cvpage,
+            $medias,
+            $artists,
             $donneespersonnelles,
         ];
     }
@@ -247,6 +251,21 @@ class PageFixtures extends FixtureAbstract implements DependentFixtureInterface
         $this->paragraphService->addParagraph($medias, 'sibling');
 
         return $medias;
+    }
+
+    private function setArtists(Page $page): Page
+    {
+        $artists = new Page();
+        $artists->setPage($page);
+        $artists->setTitle('Artistes');
+        $artists->setType(PageEnum::PERSONS->value);
+        $this->addParagraphText($artists);
+        $paragraph = $this->paragraphService->addParagraph($artists, 'person');
+        if ($paragraph instanceof PersonParagraph) {
+            $paragraph->setNbr(18);
+        }
+
+        return $artists;
     }
 
     private function setLogin(Page $page): Page
