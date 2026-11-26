@@ -56,9 +56,7 @@ class PageData extends HomeData implements DataInterface
     #[Override]
     public function match(?string $slug): bool
     {
-        dump($slug);
         $page = $this->getEntityBySlugPage($slug);
-        dump($page);
 
         return $page instanceof Page;
     }
