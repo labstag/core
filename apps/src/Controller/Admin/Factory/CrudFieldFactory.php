@@ -20,6 +20,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\BooleanFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\DateTimeFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
+use EasyCorp\Bundle\EasyAdminBundle\Filter\TextFilter;
 use Labstag\Entity\EntityWithParagraphsInterface;
 use Labstag\Entity\User;
 use Labstag\Field\ParagraphsField;
@@ -150,6 +151,20 @@ final class CrudFieldFactory
         }
 
         $filters->add(EntityFilter::new('refuser', new TranslatableMessage('User')));
+    }
+
+    /**
+     * Add state filter only if the given entity actually has a Doctrine property named 'state'.
+     */
+    public function addFilterStateFor(Filters $filters, string $entityFqcn): void
+    {
+        $entityManager = $this->managerRegistry->getManagerForClass($entityFqcn);
+        $metadata      = $entityManager instanceof ObjectManager ? $entityManager->getClassMetadata($entityFqcn) : null;
+        if (!$metadata instanceof ClassMetadata || !in_array('state', $metadata->getFieldNames(), true)) {
+            return;
+        }
+
+        $filters->add(TextFilter::new('state', new TranslatableMessage('States')));
     }
 
     /**

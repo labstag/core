@@ -130,6 +130,7 @@ class PersonCrudController extends CrudControllerAbstract
         $this->crudFieldFactory->addFilterEnable($filters);
 
         $this->crudFieldFactory->addFilterCreatedAtFor($filters, self::getEntityFqcn());
+        $this->crudFieldFactory->addFilterStateFor($filters, self::getEntityFqcn());
         return $filters;
     }
 
