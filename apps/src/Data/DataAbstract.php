@@ -46,7 +46,7 @@ abstract class DataAbstract
         return ['slug' => ''];
     }
 
-    public function getEntity(?string $slug): object
+    public function getEntity(?string $slug): ?object
     {
         unset($slug);
 
