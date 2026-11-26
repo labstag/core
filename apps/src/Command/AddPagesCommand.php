@@ -36,7 +36,6 @@ class AddPagesCommand
             $home->setTitle('Accueil');
         }
         if (!$home->getSlug()) {
-            $home->setSlug('home');
         }
         $this->pageRepository->save($home);
 
@@ -56,9 +55,6 @@ class AddPagesCommand
                 if (!$page->getTitle()) {
                     $this->setTitle($page, $case->value);
                 }
-                if (!$page->getSlug()) {
-                    $page->setSlug($case->value);
-                }
                 $this->pageRepository->save($page);
             }
         }
@@ -73,7 +69,6 @@ class AddPagesCommand
         $page = new Page();
         $page->setType($case);
         $this->setTitle($page, $case);
-        $page->setSlug($case);
         $this->setData($page, $case);
         $this->setHide($page, $case);
         $page->setPage($home);
