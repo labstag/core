@@ -88,9 +88,17 @@ class BlockFixtures extends FixtureAbstract implements DependentFixtureInterface
                 ];
             }
         }
+        $mediaPage = $this->getPageByTitle('Médias');
+        if ($mediaPage instanceof Page) {
+            $mediaUrl = '[pageurl:' . $mediaPage->getId() . ']';
+            $mediaTitle = $mediaPage->getTitle();
+        } else {
+            $mediaUrl = '#';
+            $mediaTitle = 'Médias';
+        }
         $links[] = [
-            'title'   => 'Médias',
-            'url'     => '#',
+            'title'   => $mediaTitle,
+            'url'     => $mediaUrl,
             'classes' => null,
             'blank'   => false,
             'links'   => $mediaLinks,
