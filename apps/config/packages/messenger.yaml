@@ -22,10 +22,10 @@ framework:
             # Route your messages to the transports
             # 'Labstag\Message\YourMessage': async
 
-        # buses:
-        #     messenger.bus.default:
-        #         middleware:
-        #             - Labstag\Middleware\DeduplicationMiddleware
+        buses:
+            messenger.bus.default:
+                middleware:
+                    - Labstag\Messenger\Middleware\CorrelationIdMiddleware
 
 # when@test:
 #    framework:
