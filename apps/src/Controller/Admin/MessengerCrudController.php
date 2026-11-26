@@ -61,6 +61,15 @@ class MessengerCrudController extends CrudControllerAbstract
     #[Override]
     public function configureFilters(Filters $filters): Filters
     {
+        $filters->add('messageClass');
+        $filters->add('status');
+        $filters->add('retryCount');
+        $filters->add('transports');
+        $filters->add('dispatchedAt');
+        $filters->add('startedAt');
+        $filters->add('finishedAt');
+        $filters->add('durationMs');
+
         $this->crudFieldFactory->addFilterCreatedAtFor($filters, self::getEntityFqcn());
 
         $this->crudFieldFactory->addFilterStateFor($filters, self::getEntityFqcn());
