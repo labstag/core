@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Labstag\Tests\Unit\Service;
 
-use Labstag\Service\SiteService;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Labstag\Entity\Page;
@@ -15,6 +14,7 @@ use Labstag\Service\FileService;
 use Labstag\Service\FrontService;
 use Labstag\Service\MessageDispatcherService;
 use Labstag\Service\SitemapService;
+use Labstag\Service\SiteService;
 use Labstag\Service\SlugService;
 use Labstag\Service\ViewResolverService;
 use PHPUnit\Framework\Attributes\Group;

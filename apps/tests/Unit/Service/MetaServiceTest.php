@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Labstag\Tests\Unit\Service;
 
-use stdClass;
 use Doctrine\ORM\EntityManagerInterface;
 use Labstag\Service\FileService;
 use Labstag\Service\MetaService;
@@ -13,6 +12,7 @@ use Labstag\Service\ViewResolverService;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
+use stdClass;
 use Twig\Environment;
 
 final class MetaServiceTest extends TestCase

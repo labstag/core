@@ -2,9 +2,9 @@
 
 namespace Labstag\Field;
 
-use InvalidArgumentException;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Field\FieldTrait;
+use InvalidArgumentException;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Contracts\Translation\TranslatableInterface;
 

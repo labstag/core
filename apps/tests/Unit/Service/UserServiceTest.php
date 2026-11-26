@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Labstag\Tests\Unit\Service;
 
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Labstag\Service\UserService;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 final class UserServiceTest extends TestCase
 {

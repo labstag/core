@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Labstag\Tests\Functional\Controller;
 
-use Symfony\Component\HttpFoundation\Response;
 use Labstag\Tests\AbstractWebTestCase;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 final class AdminControllerTest extends AbstractWebTestCase
 {

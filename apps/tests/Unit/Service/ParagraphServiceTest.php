@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Labstag\Tests\Unit\Service;
 
-use Labstag\Entity\Paragraph;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGeneratorInterface;
+use Labstag\Entity\Paragraph;
 use Labstag\Repository\ParagraphRepository;
 use Labstag\Service\ParagraphService;
 use PHPUnit\Framework\Attributes\Group;

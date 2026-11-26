@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Labstag\Tests\Unit\Service;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Labstag\Entity\User;
 use Doctrine\ORM\EntityRepository;
-use Labstag\Repository\NotificationRepository;
 use Labstag\Entity\Configuration;
+use Labstag\Entity\User;
+use Labstag\Repository\NotificationRepository;
 use Labstag\Service\ConfigurationService;
 use Labstag\Service\NotificationService;
 use PHPUnit\Framework\Attributes\Group;

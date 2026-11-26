@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Labstag\Tests\Unit\Service;
 
-use stdClass;
 use Labstag\Service\MessageDispatcherService;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
+use stdClass;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\MessageBusInterface;
 
@@ -18,9 +18,10 @@ final class MessageDispatcherServiceTest extends TestCase
     #[Group('unit')]
     public function dedupes(): void
     {
-        $bus     = new class implements MessageBusInterface {
+        $bus     = new class() implements MessageBusInterface {
 
             public int $calls = 0;
+
             public function dispatch(object $message, array $stamps = []): Envelope
             {
                 ++$this->calls;
@@ -38,9 +39,10 @@ final class MessageDispatcherServiceTest extends TestCase
     #[Group('unit')]
     public function dispatchCallsBus(): void
     {
-        $bus     = new class implements MessageBusInterface {
+        $bus     = new class() implements MessageBusInterface {
 
             public int $calls = 0;
+
             public function dispatch(object $message, array $stamps = []): Envelope
             {
                 ++$this->calls;
@@ -56,9 +58,10 @@ final class MessageDispatcherServiceTest extends TestCase
     #[Group('unit')]
     public function stats(): void
     {
-        $bus     = new class implements MessageBusInterface {
+        $bus     = new class() implements MessageBusInterface {
 
             public int $calls = 0;
+
             public function dispatch(object $message, array $stamps = []): Envelope
             {
                 ++$this->calls;

@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Labstag\Tests\Unit\Service;
 
-use stdClass;
 use Labstag\Service\ConfigurationService;
 use Labstag\Service\FileService;
 use Labstag\Service\SiteService;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
+use stdClass;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
