@@ -19,6 +19,7 @@ final class MessageDispatcherServiceTest extends TestCase
     public function dedupes(): void
     {
         $bus     = new class implements MessageBusInterface {
+
             public int $calls = 0;
             public function dispatch(object $message, array $stamps = []): Envelope
             {
@@ -38,6 +39,7 @@ final class MessageDispatcherServiceTest extends TestCase
     public function dispatchCallsBus(): void
     {
         $bus     = new class implements MessageBusInterface {
+
             public int $calls = 0;
             public function dispatch(object $message, array $stamps = []): Envelope
             {
@@ -55,6 +57,7 @@ final class MessageDispatcherServiceTest extends TestCase
     public function stats(): void
     {
         $bus     = new class implements MessageBusInterface {
+
             public int $calls = 0;
             public function dispatch(object $message, array $stamps = []): Envelope
             {
