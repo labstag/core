@@ -30,11 +30,15 @@ class AddPagesCommand
         );
         if (!$home instanceof Page) {
             $home = new Page();
-            $home->setType(PageEnum::HOME->value);
-            $home->setTitle('Accueil');
-            $home->setSlug('home');
-            $this->pageRepository->save($home);
         }
+        $home->setType(PageEnum::HOME->value);
+        if (!$home->getTitle()) {
+            $home->setTitle('Accueil');
+        }
+        if (!$home->getSlug()) {
+            $home->setSlug('home');
+        }
+        $this->pageRepository->save($home);
 
         foreach (PageEnum::cases() as $case) {
             if ($case->value === PageEnum::HOME->value) {
@@ -48,6 +52,14 @@ class AddPagesCommand
             );
             if (!$page instanceof Page) {
                 $this->newPage($home, $case->value);
+            } else {
+                if (!$page->getTitle()) {
+                    $this->setTitle($page, $case->value);
+                }
+                if (!$page->getSlug()) {
+                    $page->setSlug($case->value);
+                }
+                $this->pageRepository->save($page);
             }
         }
 
