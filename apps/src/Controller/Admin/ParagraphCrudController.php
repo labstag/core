@@ -133,7 +133,8 @@ class ParagraphCrudController extends CrudControllerAbstract
 
         $filters->add($discriminatorTypeFilter);
 
-        return $filters;
+                $this->crudFieldFactory->addFilterCreatedAtFor($filters, self::getEntityFqcn());
+return $filters;
     }
 
     public static function getEntityFqcn(): string

@@ -18,6 +18,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\ImageField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\SlugField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\BooleanFilter;
+use EasyCorp\Bundle\EasyAdminBundle\Filter\DateTimeFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
 use Labstag\Entity\EntityWithParagraphsInterface;
 use Labstag\Entity\User;
@@ -119,6 +120,20 @@ final class CrudFieldFactory
     public function addFilterEnable(Filters $filters): void
     {
         $filters->add(BooleanFilter::new('enable', new TranslatableMessage('Enable')));
+    }
+
+    /**
+     * Add createdAt filter only if the given entity actually has a Doctrine property named 'createdAt'.
+     */
+    public function addFilterCreatedAtFor(Filters $filters, string $entityFqcn): void
+    {
+        $entityManager = $this->managerRegistry->getManagerForClass($entityFqcn);
+        $metadata      = $entityManager instanceof ObjectManager ? $entityManager->getClassMetadata($entityFqcn) : null;
+        if (!$metadata instanceof ClassMetadata || !in_array('createdAt', $metadata->getFieldNames(), true)) {
+            return;
+        }
+
+        $filters->add(DateTimeFilter::new('createdAt', new TranslatableMessage('Created At')));
     }
 
     /**

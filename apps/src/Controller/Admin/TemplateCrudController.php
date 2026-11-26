@@ -4,6 +4,7 @@ namespace Labstag\Controller\Admin;
 
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Labstag\Email\EmailAbstract;
@@ -65,6 +66,14 @@ class TemplateCrudController extends CrudControllerAbstract
         $this->crudFieldFactory->addFieldsToTab('principal', [$wysiwygField, $textareaField]);
 
         yield from $this->crudFieldFactory->getConfigureFields($pageName);
+    }
+
+    #[Override]
+    public function configureFilters(Filters $filters): Filters
+    {
+        $this->crudFieldFactory->addFilterCreatedAtFor($filters, self::getEntityFqcn());
+
+        return $filters;
     }
 
     public static function getEntityFqcn(): string

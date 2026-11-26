@@ -56,7 +56,8 @@ class MemoCrudController extends CrudControllerAbstract
         $this->crudFieldFactory->addFilterRefUserFor($filters, self::getEntityFqcn());
         $this->crudFieldFactory->addFilterEnable($filters);
 
-        return $filters;
+                $this->crudFieldFactory->addFilterCreatedAtFor($filters, self::getEntityFqcn());
+return $filters;
     }
 
     public static function getEntityFqcn(): string

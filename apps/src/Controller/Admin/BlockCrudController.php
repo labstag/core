@@ -184,7 +184,8 @@ class BlockCrudController extends CrudControllerAbstract
 
         $filters->add($discriminatorTypeFilter);
 
-        return $filters;
+                $this->crudFieldFactory->addFilterCreatedAtFor($filters, self::getEntityFqcn());
+return $filters;
     }
 
     #[Override]

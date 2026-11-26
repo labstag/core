@@ -90,7 +90,8 @@ class SagaCrudController extends CrudControllerAbstract
     {
         $this->crudFieldFactory->addFilterEnable($filters);
 
-        return $filters;
+                $this->crudFieldFactory->addFilterCreatedAtFor($filters, self::getEntityFqcn());
+return $filters;
     }
 
     public static function getEntityFqcn(): string

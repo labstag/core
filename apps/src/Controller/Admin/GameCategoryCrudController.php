@@ -29,6 +29,14 @@ class GameCategoryCrudController extends CategoryCrudControllerAbstract
         yield from $this->crudFieldFactory->getConfigureFields($pageName);
     }
 
+    #[Override]
+    public function configureFilters(Filters $filters): Filters
+    {
+        $this->crudFieldFactory->addFilterCreatedAtFor($filters, self::getEntityFqcn());
+
+        return $filters;
+    }
+
     public static function getEntityFqcn(): string
     {
         return GameCategory::class;

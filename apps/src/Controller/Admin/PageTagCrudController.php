@@ -24,6 +24,13 @@ class PageTagCrudController extends TagCrudControllerAbstract
     }
 
     #[Override]
+    public function configureFilters(Filters $filters): Filters
+    {
+        $this->crudFieldFactory->addFilterCreatedAtFor($filters, self::getEntityFqcn());
+
+        return $filters;
+    }
+
     public static function getEntityFqcn(): string
     {
         return PageTag::class;

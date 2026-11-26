@@ -72,7 +72,8 @@ class ChapterCrudController extends CrudControllerAbstract
         $filters->add(EntityFilter::new('refstory', new TranslatableMessage('Story')));
         $this->crudFieldFactory->addFilterTagsFor($filters, self::getEntityFqcn());
 
-        return $filters;
+                $this->crudFieldFactory->addFilterCreatedAtFor($filters, self::getEntityFqcn());
+return $filters;
     }
 
     #[Override]

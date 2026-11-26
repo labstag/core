@@ -5,6 +5,7 @@ namespace Labstag\Controller\Admin;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
@@ -113,6 +114,14 @@ class ConfigurationCrudController extends CrudControllerAbstract
         $this->crudFieldFactory->addFieldsToTab('placeholders', $this->addConfigureFieldsPlaceHolders($pageName));
 
         yield from $this->crudFieldFactory->getConfigureFields($pageName);
+    }
+
+    #[Override]
+    public function configureFilters(Filters $filters): Filters
+    {
+        $this->crudFieldFactory->addFilterCreatedAtFor($filters, self::getEntityFqcn());
+
+        return $filters;
     }
 
     public static function getEntityFqcn(): string

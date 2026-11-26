@@ -6,6 +6,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
@@ -120,6 +121,14 @@ class PlatformCrudController extends CrudControllerAbstract
         $this->crudFieldFactory->setTabDate($pageName);
 
         yield from $this->crudFieldFactory->getConfigureFields($pageName);
+    }
+
+    #[Override]
+    public function configureFilters(Filters $filters): Filters
+    {
+        $this->crudFieldFactory->addFilterCreatedAtFor($filters, self::getEntityFqcn());
+
+        return $filters;
     }
 
     public static function getEntityFqcn(): string
