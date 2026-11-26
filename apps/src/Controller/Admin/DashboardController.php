@@ -12,7 +12,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Exception;
 use Labstag\Controller\Admin\Factory\MenuItemFactory;
-use Labstag\Controller\Admin\MessengerCrudController;
 use Labstag\Entity\Memo;
 use Labstag\Entity\User;
 use Labstag\Repository\ConfigurationRepository;

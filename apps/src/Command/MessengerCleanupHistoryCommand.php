@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Labstag\Command;
 
 use Labstag\Repository\MessengerRepository;
@@ -13,7 +15,9 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 #[AsCommand(name: 'app:messenger:cleanup-history', description: 'Remove expired successful messenger history rows')]
 class MessengerCleanupHistoryCommand extends Command
 {
-    public function __construct(private MessengerRepository $repository)
+    public function __construct(
+        private MessengerRepository $repository
+    )
     {
         parent::__construct();
     }
@@ -25,12 +29,13 @@ class MessengerCleanupHistoryCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $io = new SymfonyStyle($input, $output);
+        $io    = new SymfonyStyle($input, $output);
         $count = $this->repository->countExpired();
         $io->info(sprintf('Expired rows: %d', $count));
         if ($input->getOption('dry-run')) {
             return Command::SUCCESS;
         }
+
         $deleted = $this->repository->cleanupExpired();
         $io->success(sprintf('Deleted %d rows', $deleted));
 

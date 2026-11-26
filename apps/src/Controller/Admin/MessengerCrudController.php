@@ -13,40 +13,37 @@ use Labstag\Entity\Messenger;
 
 class MessengerCrudController extends AbstractCrudController
 {
-    public static function getEntityFqcn(): string
-    {
-        return Messenger::class;
-    }
-
     public function configureActions(Actions $actions): Actions
     {
-        return $actions
-            ->disable(Action::NEW)
-            ->disable(Action::EDIT)
-            ->add(Crud::PAGE_INDEX, Action::DETAIL);
+        return $actions->disable(Action::NEW)->disable(Action::EDIT)->add(Crud::PAGE_INDEX, Action::DETAIL);
     }
 
     public function configureFields(string $pageName): iterable
     {
         yield TextField::new('messageClass');
         yield TextField::new('transport');
-        yield TextField::new('status')
-            ->formatValue(function ($value) {
+        yield TextField::new('status')->formatValue(
+            function ($value): string {
                 $colors = [
-                    'pending' => 'warning',
+                    'pending'    => 'warning',
                     'processing' => 'info',
-                    'success' => 'success',
-                    'failed' => 'danger',
+                    'success'    => 'success',
+                    'failed'     => 'danger',
                 ];
                 $color = $colors[$value] ?? 'secondary';
 
                 return sprintf('<span class="badge bg-%s">%s</span>', $color, $value);
-            })
-            ->renderAsHtml();
+            }
+        )->renderAsHtml();
         yield IntegerField::new('retryCount');
         yield DateTimeField::new('dispatchedAt');
         yield DateTimeField::new('startedAt');
         yield DateTimeField::new('finishedAt');
         yield IntegerField::new('durationMs');
+    }
+
+    public static function getEntityFqcn(): string
+    {
+        return Messenger::class;
     }
 }

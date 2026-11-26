@@ -31,12 +31,15 @@ class AddPagesCommand
         if (!$home instanceof Page) {
             $home = new Page();
         }
+
         $home->setType(PageEnum::HOME->value);
         if (!$home->getTitle()) {
             $home->setTitle('Accueil');
         }
+
         if (!$home->getSlug()) {
         }
+
         $this->pageRepository->save($home);
 
         foreach (PageEnum::cases() as $case) {
@@ -55,6 +58,7 @@ class AddPagesCommand
                 if (!$page->getTitle()) {
                     $this->setTitle($page, $case->value);
                 }
+
                 $this->pageRepository->save($page);
             }
         }
