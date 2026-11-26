@@ -69,10 +69,32 @@ class BlockFixtures extends FixtureAbstract implements DependentFixtureInterface
         $this->setLink($page, $links);
         $page = $this->getPageByTitle('Mes étoiles github');
         $this->setLink($page, $links);
-        $page = $this->getPageByTitle('Mes derniers films vus');
-        $this->setLink($page, $links);
-        $page = $this->getPageByTitle('Mes séries favorites');
-        $this->setLink($page, $links);
+        $mediaLinks = [];
+        foreach (['Sortie de la semaine', 'Ludothèque', 'Mes séries favorites', 'Mes derniers films vus', 'Artistes'] as $title) {
+            $mediaPage = $this->getPageByTitle($title);
+            if ($mediaPage instanceof Page) {
+                $mediaLinks[] = [
+                    'title'   => $mediaPage->getTitle(),
+                    'url'     => '[pageurl:' . $mediaPage->getId() . ']',
+                    'classes' => null,
+                    'blank'   => false,
+                ];
+            } else {
+                $mediaLinks[] = [
+                    'title'   => $title,
+                    'url'     => '#',
+                    'classes' => null,
+                    'blank'   => false,
+                ];
+            }
+        }
+        $links[] = [
+            'title'   => 'Médias',
+            'url'     => '#',
+            'classes' => null,
+            'blank'   => false,
+            'links'   => $mediaLinks,
+        ];
         $page = $this->getPageByTitle('Histoires');
         $this->setLink($page, $links);
         $page = $this->getPageByTitle('Mon parcours pro');
