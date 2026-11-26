@@ -14,7 +14,7 @@ interface DataInterface
 
     public function getEntity(?string $slug): ?object;
 
-    public function getTitle(object $entity): string;
+    public function getTitle(?object $entity): string;
 
     public function match(?string $slug): bool;
 

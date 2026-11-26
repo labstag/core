@@ -43,7 +43,7 @@ class PageData extends HomeData implements DataInterface
     }
 
     #[Override]
-    public function getTitle(object $entity): string
+    public function getTitle(?object $entity): string
     {
         return $entity->getTitle();
     }
