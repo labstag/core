@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Labstag\Service\File;
 
+use DateTimeInterface;
+use DateTime;
 use Essence\Essence;
 use Essence\Media;
 use Exception;
@@ -46,7 +48,7 @@ class FileUploadService
             $content  = $propertyAccessor->getValue($entity, $mapping->getFileNamePropertyName());
             if ('' != $content) {
                 $file = $basePath . '/' . $content;
-                if (method_exists($entity, 'getUpdatedAt') && $entity->getUpdatedAt() instanceof \DateTimeInterface) {
+                if (method_exists($entity, 'getUpdatedAt') && $entity->getUpdatedAt() instanceof DateTimeInterface) {
                     $file .= '?v=' . $entity->getUpdatedAt()->getTimestamp();
                 }
             }
@@ -164,7 +166,7 @@ class FileUploadService
         try {
             // Si c'est une URL, télécharger le fichier localement
             if (filter_var($filePath, FILTER_VALIDATE_URL)) {
-                $tempPath = tempnam(sys_get_temp_dir(), 'download_'.$type.'_');
+                $tempPath = tempnam(sys_get_temp_dir(), 'download_' . $type . '_');
                 $content  = file_get_contents($filePath);
                 if (false === $content) {
                     $this->logger->error('Failed to download file from URL: ' . $filePath);
@@ -175,7 +177,7 @@ class FileUploadService
                 $filePath = $tempPath;
             }
 
-            $this->messageDispatcherService->dispatch(new FileDeleteMessage($filePath), [new DelayStamp(60_000)], true);
+            $this->messageDispatcherService->dispatch(new FileDeleteMessage($filePath), [new DelayStamp(120_000)], true);
 
             $uploadedFile = new UploadedFile(
                 path: $filePath,
@@ -186,7 +188,7 @@ class FileUploadService
 
             $propertyAccessor->setValue($entity, $type, $uploadedFile);
             if (method_exists($entity, 'setUpdatedAt')) {
-                $entity->setUpdatedAt(new \DateTime());
+                $entity->setUpdatedAt(new DateTime());
             }
         } catch (Exception $exception) {
             $this->logger->error('Error setting uploaded file: ' . $exception->getMessage());

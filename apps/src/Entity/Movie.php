@@ -3,7 +3,6 @@
 namespace Labstag\Entity;
 
 use DateTime;
-use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -88,7 +87,7 @@ class Movie implements Stringable, EntityWithParagraphsInterface
     #[ORM\Column(length: 255, unique: true)]
     protected ?string $imdb = null;
 
-    #[ORM\OneToOne(inversedBy: 'movie', cascade: ['persist', 'remove'], orphanRemoval: true, fetch: 'LAZY')]
+    #[ORM\OneToOne(inversedBy: 'movie', cascade: ['persist', 'remove'], fetch: 'LAZY', orphanRemoval: true)]
     protected ?Meta $meta = null;
 
     /**

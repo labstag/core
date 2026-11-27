@@ -2,8 +2,6 @@
 
 namespace Labstag\Entity;
 
-use DateTime;
-use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -48,7 +46,7 @@ class Chapter implements Stringable, EntityWithParagraphsInterface
     #[Vich\UploadableField(mapping: 'chapter', fileNameProperty: 'img')]
     protected ?File $imgFile = null;
 
-    #[ORM\OneToOne(inversedBy: 'chapter', cascade: ['persist', 'remove'], orphanRemoval: true, fetch: 'LAZY')]
+    #[ORM\OneToOne(inversedBy: 'chapter', cascade: ['persist', 'remove'], fetch: 'LAZY', orphanRemoval: true)]
     protected ?Meta $meta = null;
 
     /**

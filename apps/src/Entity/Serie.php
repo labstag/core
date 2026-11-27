@@ -3,7 +3,6 @@
 namespace Labstag\Entity;
 
 use DateTime;
-use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -90,7 +89,7 @@ class Serie implements Stringable, EntityWithParagraphsInterface
     #[ORM\Column(name: 'lastrelease_date', type: Types::DATE_MUTABLE, nullable: true)]
     protected ?DateTime $lastreleaseDate = null;
 
-    #[ORM\OneToOne(inversedBy: 'serie', cascade: ['persist', 'remove'], orphanRemoval: true, fetch: 'LAZY')]
+    #[ORM\OneToOne(inversedBy: 'serie', cascade: ['persist', 'remove'], fetch: 'LAZY', orphanRemoval: true)]
     protected ?Meta $meta = null;
 
     /**

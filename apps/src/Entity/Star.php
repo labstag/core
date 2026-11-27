@@ -2,8 +2,6 @@
 
 namespace Labstag\Entity;
 
-use DateTime;
-use DateTimeImmutable;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Labstag\Entity\Traits\TimestampableTrait;

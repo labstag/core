@@ -2,8 +2,6 @@
 
 namespace Labstag\Entity;
 
-use DateTime;
-use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\HttpFoundation\File\File;
 use Vich\UploaderBundle\Mapping\Attribute as Vich;

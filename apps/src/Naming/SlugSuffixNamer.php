@@ -2,8 +2,8 @@
 
 namespace Labstag\Naming;
 
-use Throwable;
 use Symfony\Component\PropertyAccess\PropertyAccess;
+use Throwable;
 use Vich\UploaderBundle\Exception\NameGenerationException;
 use Vich\UploaderBundle\Mapping\PropertyMappingInterface;
 use Vich\UploaderBundle\Naming\ConfigurableInterface;

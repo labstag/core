@@ -2,8 +2,6 @@
 
 namespace Labstag\Entity;
 
-use DateTime;
-use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -66,7 +64,7 @@ class Page implements Stringable, EntityWithParagraphsInterface
     #[Vich\UploadableField(mapping: 'page', fileNameProperty: 'img')]
     protected ?File $imgFile = null;
 
-    #[ORM\OneToOne(inversedBy: 'page', cascade: ['persist', 'remove'], orphanRemoval: true, fetch: 'LAZY')]
+    #[ORM\OneToOne(inversedBy: 'page', cascade: ['persist', 'remove'], fetch: 'LAZY', orphanRemoval: true)]
     protected ?Meta $meta = null;
 
     #[ORM\ManyToOne(targetEntity: self::class, cascade: ['persist', 'detach'], inversedBy: 'children')]
