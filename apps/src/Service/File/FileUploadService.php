@@ -18,6 +18,7 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Messenger\Stamp\DelayStamp;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyPathInterface;
+use Vich\UploaderBundle\Handler\UploadHandlerInterface;
 use Vich\UploaderBundle\Mapping\PropertyMappingFactoryInterface;
 
 class FileUploadService
@@ -30,6 +31,7 @@ class FileUploadService
         private LoggerInterface $logger,
         private FileStorageService $fileStorageService,
         private MessageDispatcherService $messageDispatcherService,
+        private UploadHandlerInterface $uploadHandler,
     )
     {
     }
@@ -190,6 +192,8 @@ class FileUploadService
             if (method_exists($entity, 'setUpdatedAt')) {
                 $entity->setUpdatedAt(new DateTime());
             }
+
+            $this->uploadHandler->upload($entity, $type instanceof PropertyPathInterface ? (string) $type : $type);
         } catch (Exception $exception) {
             $this->logger->error('Error setting uploaded file: ' . $exception->getMessage());
             throw new Exception(

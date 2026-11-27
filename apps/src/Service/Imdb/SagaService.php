@@ -2,7 +2,6 @@
 
 namespace Labstag\Service\Imdb;
 
-use Doctrine\ORM\EntityManagerInterface;
 use Labstag\Api\TheMovieDbApi;
 use Labstag\Entity\Saga;
 use Labstag\Message\SagaMessage;
@@ -17,7 +16,6 @@ class SagaService
         private LoggerInterface $logger,
         private MessageDispatcherService $messageDispatcherService,
         private SagaRepository $sagaRepository,
-        private EntityManagerInterface $entityManager,
         private FileUploadService $fileUploadService,
         private TheMovieDbApi $theMovieDbApi,
     )

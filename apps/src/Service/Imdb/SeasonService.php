@@ -183,7 +183,6 @@ class SeasonService
 
     private function updateImageBackdrop(Season $season): bool
     {
-        $entityRepository = $this->entityManager->getRepository(Season::class);
         $images           = [];
         foreach ($season->getEpisodes() as $episode) {
             $file     = $episode->getImg();
