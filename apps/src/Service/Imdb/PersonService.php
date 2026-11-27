@@ -66,7 +66,6 @@ class PersonService
     {
         $poster = $this->theMovieDbApi->images()->getProfileUrl($details['tmdb']['profile_path'] ?? '');
         if (is_null($poster)) {
-
             return false;
         }
 

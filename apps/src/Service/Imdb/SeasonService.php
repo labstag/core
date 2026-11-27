@@ -184,7 +184,7 @@ class SeasonService
     private function updateImageBackdrop(Season $season): bool
     {
         $entityRepository = $this->entityManager->getRepository(Season::class);
-        $images = [];
+        $images           = [];
         foreach ($season->getEpisodes() as $episode) {
             $file     = $episode->getImg();
             if (is_null($file)) {
@@ -203,7 +203,6 @@ class SeasonService
             $this->fileUploadService->setUploadedFile($patchwork, $season, 'backdropFile');
             $entityRepository->save($season);
         }
-
 
         return true;
     }

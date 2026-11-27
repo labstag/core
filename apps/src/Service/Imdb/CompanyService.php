@@ -2,6 +2,7 @@
 
 namespace Labstag\Service\Imdb;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Labstag\Api\TheMovieDbApi;
 use Labstag\Entity\Company;
 use Labstag\Message\CompanyMessage;
@@ -9,7 +10,6 @@ use Labstag\Repository\CompanyRepository;
 use Labstag\Service\File\FileUploadService;
 use Labstag\Service\MessageDispatcherService;
 use Psr\Log\LoggerInterface;
-use Doctrine\ORM\EntityManagerInterface;
 
 class CompanyService
 {

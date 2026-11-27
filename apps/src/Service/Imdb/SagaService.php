@@ -2,6 +2,7 @@
 
 namespace Labstag\Service\Imdb;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Labstag\Api\TheMovieDbApi;
 use Labstag\Entity\Saga;
 use Labstag\Message\SagaMessage;
@@ -9,7 +10,6 @@ use Labstag\Repository\SagaRepository;
 use Labstag\Service\File\FileUploadService;
 use Labstag\Service\MessageDispatcherService;
 use Psr\Log\LoggerInterface;
-use Doctrine\ORM\EntityManagerInterface;
 
 class SagaService
 {
@@ -92,7 +92,6 @@ class SagaService
     {
         $backdrop = $this->theMovieDbApi->images()->getBackdropUrl($data['tmdb']['backdrop_path'] ?? '');
         if (is_null($backdrop)) {
-
             return false;
         }
 
@@ -107,7 +106,6 @@ class SagaService
     {
         $poster = $this->theMovieDbApi->images()->getPosterUrl($data['tmdb']['poster_path'] ?? '');
         if (is_null($poster)) {
-
             return false;
         }
 
