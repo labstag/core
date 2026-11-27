@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Labstag\EventSubscriber;
+namespace Labstag\Event\Subscriber;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Messenger\Event\WorkerMessageFailedEvent;
