@@ -20,6 +20,7 @@ vich_uploader:
         service: Vich\UploaderBundle\Naming\PropertyNamer
         options:
           property: slug
+          transliterate: true
       inject_on_load: false
       delete_on_update: true
       delete_on_remove: true
