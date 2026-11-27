@@ -147,6 +147,21 @@ class PageFixtures extends FixtureAbstract implements DependentFixtureInterface
         ];
     }
 
+    private function setArtists(Page $page): Page
+    {
+        $artists = new Page();
+        $artists->setPage($page);
+        $artists->setTitle('Artistes');
+        $artists->setType(PageEnum::PERSONS->value);
+        $this->addParagraphText($artists);
+        $paragraph = $this->paragraphService->addParagraph($artists, 'person');
+        if ($paragraph instanceof PersonParagraph) {
+            $paragraph->setNbr(18);
+        }
+
+        return $artists;
+    }
+
     private function setChangePassword(Page $page): Page
     {
         $changepassword = new Page();
@@ -241,45 +256,6 @@ class PageFixtures extends FixtureAbstract implements DependentFixtureInterface
         return $info;
     }
 
-    private function setMedias(Page $page): Page
-    {
-        $medias = new Page();
-        $medias->setPage($page);
-        $medias->setTitle('Médias');
-        $medias->setType(PageEnum::PAGE->value);
-        $this->addParagraphText($medias);
-        $this->paragraphService->addParagraph($medias, 'sibling');
-
-        return $medias;
-    }
-
-    private function setSortieSemaine(Page $page): Page
-    {
-        $sortie = new Page();
-        $sortie->setPage($page);
-        $sortie->setTitle('Sortie de la semaine');
-        $sortie->setType(PageEnum::PAGE->value);
-        $this->addParagraphText($sortie);
-        $this->paragraphService->addParagraph($sortie, 'sibling');
-
-        return $sortie;
-    }
-
-    private function setArtists(Page $page): Page
-    {
-        $artists = new Page();
-        $artists->setPage($page);
-        $artists->setTitle('Artistes');
-        $artists->setType(PageEnum::PERSONS->value);
-        $this->addParagraphText($artists);
-        $paragraph = $this->paragraphService->addParagraph($artists, 'person');
-        if ($paragraph instanceof PersonParagraph) {
-            $paragraph->setNbr(18);
-        }
-
-        return $artists;
-    }
-
     private function setLogin(Page $page): Page
     {
         $login = new Page();
@@ -314,6 +290,18 @@ class PageFixtures extends FixtureAbstract implements DependentFixtureInterface
         }
 
         return $lostpassword;
+    }
+
+    private function setMedias(Page $page): Page
+    {
+        $medias = new Page();
+        $medias->setPage($page);
+        $medias->setTitle('Médias');
+        $medias->setType(PageEnum::PAGE->value);
+        $this->addParagraphText($medias);
+        $this->paragraphService->addParagraph($medias, 'sibling');
+
+        return $medias;
     }
 
     private function setMentions(Page $page): Page
@@ -448,6 +436,18 @@ class PageFixtures extends FixtureAbstract implements DependentFixtureInterface
         $this->paragraphService->addParagraph($sitemap, 'sitemap');
 
         return $sitemap;
+    }
+
+    private function setSortieSemaine(Page $page): Page
+    {
+        $sortie = new Page();
+        $sortie->setPage($page);
+        $sortie->setTitle('Sortie de la semaine');
+        $sortie->setType(PageEnum::PAGE->value);
+        $this->addParagraphText($sortie);
+        $this->paragraphService->addParagraph($sortie, 'sibling');
+
+        return $sortie;
     }
 
     private function setStar(Page $page): Page
