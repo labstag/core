@@ -65,6 +65,13 @@ class PersonService
     private function updateImageProfile(Person $person, array $details): bool
     {
         $poster = $this->theMovieDbApi->images()->getProfileUrl($details['tmdb']['profile_path'] ?? '');
+        if (is_null($poster)) {
+            $person->setProfileFile();
+            $person->setProfile(null);
+
+            return false;
+        }
+
         $this->fileUploadService->setUploadedFile($poster, $person, 'profileFile');
 
         return true;

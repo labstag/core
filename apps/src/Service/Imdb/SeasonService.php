@@ -211,6 +211,10 @@ class SeasonService
     private function updateImagePoster(Season $season, array $details): bool
     {
         $poster = $this->theMovieDbApi->images()->getPosterUrl($details['tmdb']['poster_path'] ?? '');
+        if (is_null($poster)) {
+            return false;
+        }
+
         $this->fileUploadService->setUploadedFile($poster, $season, 'posterFile');
 
         return true;
