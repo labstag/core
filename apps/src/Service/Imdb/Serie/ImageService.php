@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Labstag\Service\Imdb\Serie;
 
-use Doctrine\ORM\EntityManagerInterface;
 use Labstag\Api\TheMovieDbApi;
 use Labstag\Entity\Serie;
 use Labstag\Service\File\FileUploadService;
@@ -13,7 +12,6 @@ class ImageService
 {
     public function __construct(
         private FileUploadService $fileUploadService,
-        private EntityManagerInterface $entityManager,
         private TheMovieDbApi $theMovieDbApi,
     )
     {
