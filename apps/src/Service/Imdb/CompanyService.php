@@ -76,8 +76,6 @@ class CompanyService
         }
 
         $this->fileUploadService->setUploadedFile($poster, $company, 'imgFile');
-        $entityRepository = $this->entityManager->getRepository(Company::class);
-        $entityRepository->save($company);
 
         return true;
     }

@@ -96,8 +96,6 @@ class SagaService
         }
 
         $this->fileUploadService->setUploadedFile($backdrop, $saga, 'backdropFile');
-        $entityRepository = $this->entityManager->getRepository(Saga::class);
-        $entityRepository->save($saga);
 
         return true;
     }
@@ -110,8 +108,6 @@ class SagaService
         }
 
         $this->fileUploadService->setUploadedFile($poster, $saga, 'posterFile');
-        $entityRepository = $this->entityManager->getRepository(Saga::class);
-        $entityRepository->save($saga);
 
         return true;
     }

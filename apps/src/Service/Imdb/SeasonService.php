@@ -201,7 +201,6 @@ class SeasonService
         $patchwork = $this->fileUploadService->setImgPatchwork($images);
         if (!is_null($patchwork)) {
             $this->fileUploadService->setUploadedFile($patchwork, $season, 'backdropFile');
-            $entityRepository->save($season);
         }
 
         return true;
@@ -218,8 +217,6 @@ class SeasonService
         }
 
         $this->fileUploadService->setUploadedFile($poster, $season, 'posterFile');
-        $entityRepository = $this->entityManager->getRepository(Season::class);
-        $entityRepository->save($season);
 
         return true;
     }

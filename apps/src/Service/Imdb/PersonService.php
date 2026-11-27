@@ -70,8 +70,6 @@ class PersonService
         }
 
         $this->fileUploadService->setUploadedFile($poster, $person, 'profileFile');
-        $entityRepository = $this->entityManager->getRepository(Person::class);
-        $entityRepository->save($person);
 
         return true;
     }
