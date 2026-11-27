@@ -114,7 +114,6 @@ class PageFixtures extends FixtureAbstract implements DependentFixtureInterface
         $post                = $this->setPost($page);
         $star                = $this->setStar($page);
         $info                = $this->setInformations($page);
-        $medias              = $this->setMedias($page);
         $changepassword      = $this->setChangePassword($page);
         $login               = $this->setLogin($page);
         $lostpassword        = $this->setLostPassword($page);
@@ -142,7 +141,6 @@ class PageFixtures extends FixtureAbstract implements DependentFixtureInterface
             $sitemap,
             $mentions,
             $cvpage,
-            $medias,
             $sortie,
             $artists,
             $donneespersonnelles,
