@@ -81,6 +81,7 @@ class MessengerCrudController extends CrudControllerAbstract
                 ChoiceFilter::new('messageClass', new TranslatableMessage('Message Class'))->setChoices($choices)
             );
         }
+
         $filters->add(
             ChoiceFilter::new('status', new TranslatableMessage('Status'))->setChoices(
                 [

@@ -23,10 +23,16 @@ final class AddSerieMessageHandler
     {
         $data = $addSerieMessage->getData();
 
-        $imdb  = (string) $data['Imdb'];
-        $serie = $this->serieRepository->findOneBy(
-            ['imdb' => $imdb]
-        );
+        $imdb  = trim((string) ($data['Imdb'] ?? ''));
+        $imdb  = '' === $imdb ? null : $imdb;
+
+        $serie = null;
+        if (null !== $imdb) {
+            $serie = $this->serieRepository->findOneBy(
+                ['imdb' => $imdb]
+            );
+        }
+
         if ($serie instanceof Serie) {
             $serie->setFile(true);
             $this->serieRepository->save($serie);

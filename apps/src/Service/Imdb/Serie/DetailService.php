@@ -6,12 +6,14 @@ namespace Labstag\Service\Imdb\Serie;
 
 use DateTime;
 use Labstag\Entity\Serie;
+use Labstag\Repository\SerieRepository;
 use Labstag\Service\VideoService;
 
 class DetailService
 {
     public function __construct(
         private VideoService $videoService,
+        private SerieRepository $serieRepository,
     )
     {
     }
@@ -81,7 +83,21 @@ class DetailService
             return false;
         }
 
-        $serie->setImdb((string) $details['other']['imdb_id']);
+        $imdbId = $details['other']['imdb_id'] ?? null;
+        if (empty($imdbId)) {
+            return false;
+        }
+
+        $existing = $this->serieRepository->findOneBy(
+            [
+                'imdb' => (string) $imdbId,
+            ]
+        );
+        if ($existing instanceof Serie && $existing->getId() !== $serie->getId()) {
+            return false;
+        }
+
+        $serie->setImdb((string) $imdbId);
 
         return true;
     }
