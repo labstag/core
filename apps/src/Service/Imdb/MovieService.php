@@ -124,6 +124,7 @@ class MovieService
     private function updateSaga(Movie $movie, array $details): bool
     {
         if (is_null($details['collection'])) {
+            $movie->setSaga(null);
             return false;
         }
 
