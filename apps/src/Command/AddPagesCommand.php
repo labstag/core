@@ -50,7 +50,7 @@ class AddPagesCommand
                 ]
             );
             if (!$page instanceof Page) {
-                echo "Creating new page for type: " . $case->value . "\n";
+                echo 'Creating new page for type: ' . $case->value . "\n";
                 $this->newPage($home, $case->value);
             } else {
                 if (!$page->getTitle()) {
