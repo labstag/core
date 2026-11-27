@@ -78,8 +78,7 @@ class Story implements Stringable, EntityWithParagraphsInterface
     #[Vich\UploadableField(mapping: 'story', fileNameProperty: 'img')]
     protected ?File $imgFile = null;
 
-    #[ORM\OneToOne(inversedBy: 'story', cascade: ['persist', 'remove'], orphanRemoval: true)]
-    #[ORM\JoinColumn(nullable: true)]
+    #[ORM\OneToOne(inversedBy: 'story', cascade: ['persist', 'remove'], orphanRemoval: true, fetch: 'LAZY')]
     protected ?Meta $meta = null;
 
     /**
@@ -328,12 +327,6 @@ class Story implements Stringable, EntityWithParagraphsInterface
     public function setImgFile(?File $imgFile = null): void
     {
         $this->imgFile = $imgFile;
-
-        if ($imgFile instanceof File) {
-            // It is required that at least one field changes if you are using doctrine
-            // otherwise the event listeners won't be called and the file is lost
-            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
-        }
     }
 
     public function setMeta(Meta $meta): static
@@ -351,12 +344,6 @@ class Story implements Stringable, EntityWithParagraphsInterface
     public function setPdfFile(?File $pdfFile = null): void
     {
         $this->pdfFile = $pdfFile;
-
-        if ($pdfFile instanceof File) {
-            // It is required that at least one field changes if you are using doctrine
-            // otherwise the event listeners won't be called and the file is lost
-            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
-        }
     }
 
     public function setRefuser(?User $user): static

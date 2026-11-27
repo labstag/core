@@ -48,21 +48,11 @@ class VideoParagraph extends Paragraph
     public function setImg(?string $img): void
     {
         $this->img = $img;
-
-        if (null === $img) {
-            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
-        }
     }
 
     public function setImgFile(?File $imgFile = null): void
     {
         $this->imgFile = $imgFile;
-
-        if ($imgFile instanceof File) {
-            // It is required that at least one field changes if you are using doctrine
-            // otherwise the event listeners won't be called and the file is lost
-            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
-        }
     }
 
     public function setTitle(?string $title): static

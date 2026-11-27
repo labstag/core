@@ -510,21 +510,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
     public function setAvatar(?string $avatar): void
     {
         $this->avatar = $avatar;
-
-        if (null === $avatar) {
-            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
-        }
     }
 
     public function setAvatarFile(?File $avatarFile = null): void
     {
         $this->avatarFile = $avatarFile;
-
-        if ($avatarFile instanceof File) {
-            // It is required that at least one field changes if you are using doctrine
-            // otherwise the event listeners won't be called and the file is lost
-            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
-        }
     }
 
     public function setEmail(string $email): static

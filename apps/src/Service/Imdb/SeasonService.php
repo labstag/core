@@ -125,7 +125,7 @@ class SeasonService
         $statuses = [
             $this->updateSeason($season, $details),
             $this->updateImagePoster($season, $details),
-            $this->updateImageBackdrop($season),
+            $this->updateImageBackdrop($season, $details),
             $this->updateCredits(),
             $this->updateEpisodes($season, $details),
         ];
@@ -181,7 +181,7 @@ class SeasonService
         return true;
     }
 
-    private function updateImageBackdrop(Season $season): bool
+    private function updateImageBackdrop(Season $season, array $details): bool
     {
         $images = [];
         foreach ($season->getEpisodes() as $episode) {
@@ -211,10 +211,6 @@ class SeasonService
     private function updateImagePoster(Season $season, array $details): bool
     {
         $poster = $this->theMovieDbApi->images()->getPosterUrl($details['tmdb']['poster_path'] ?? '');
-        if (is_null($poster)) {
-            return false;
-        }
-
         $this->fileUploadService->setUploadedFile($poster, $season, 'posterFile');
 
         return true;

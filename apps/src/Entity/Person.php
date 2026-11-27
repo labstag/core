@@ -38,8 +38,7 @@ class Person
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
     protected ?string $id = null;
 
-    #[ORM\OneToOne(inversedBy: 'person', cascade: ['persist', 'remove'], orphanRemoval: true)]
-    #[ORM\JoinColumn(nullable: true)]
+    #[ORM\OneToOne(inversedBy: 'person', cascade: ['persist', 'remove'], orphanRemoval: true, fetch: 'LAZY')]
     protected ?Meta $meta = null;
 
     /**
@@ -243,21 +242,11 @@ class Person
     public function setProfile(?string $profile): void
     {
         $this->profile = $profile;
-
-        if (null === $profile) {
-            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
-        }
     }
 
     public function setProfileFile(?File $profileFile = null): void
     {
         $this->profileFile = $profileFile;
-
-        if ($profileFile instanceof File) {
-            // It is required that at least one field changes if you are using doctrine
-            // otherwise the event listeners won't be called and the file is lost
-            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
-        }
     }
 
     public function setSlug(?string $slug): static

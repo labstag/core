@@ -802,12 +802,6 @@ class Configuration
     public function setChapterPlaceholderFile(?File $chapterPlaceholderFile = null): void
     {
         $this->chapterPlaceholderFile = $chapterPlaceholderFile;
-
-        if ($chapterPlaceholderFile instanceof File) {
-            // It is required that at least one field changes if you are using doctrine
-            // otherwise the event listeners won't be called and the file is lost
-            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
-        }
     }
 
     public function setCopyright(string $copyright): static
@@ -839,12 +833,6 @@ class Configuration
     public function setEditoPlaceholderFile(?File $editoPlaceholderFile = null): void
     {
         $this->editoPlaceholderFile = $editoPlaceholderFile;
-
-        if ($editoPlaceholderFile instanceof File) {
-            // It is required that at least one field changes if you are using doctrine
-            // otherwise the event listeners won't be called and the file is lost
-            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
-        }
     }
 
     public function setEmail(string $email): static
@@ -862,12 +850,6 @@ class Configuration
     public function setEpisodePlaceholderFile(?File $episodePlaceholderFile = null): void
     {
         $this->episodePlaceholderFile = $episodePlaceholderFile;
-
-        if ($episodePlaceholderFile instanceof File) {
-            // It is required that at least one field changes if you are using doctrine
-            // otherwise the event listeners won't be called and the file is lost
-            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
-        }
     }
 
     public function setGamePlaceholder(?string $gamePlaceholder): void
@@ -878,12 +860,6 @@ class Configuration
     public function setGamePlaceholderFile(?File $gamePlaceholderFile = null): void
     {
         $this->gamePlaceholderFile = $gamePlaceholderFile;
-
-        if ($gamePlaceholderFile instanceof File) {
-            // It is required that at least one field changes if you are using doctrine
-            // otherwise the event listeners won't be called and the file is lost
-            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
-        }
     }
 
     public function setLanguageTmdb(?string $languageTmdb): static
@@ -901,12 +877,6 @@ class Configuration
     public function setLogoFile(?File $logoFile = null): void
     {
         $this->logoFile = $logoFile;
-
-        if ($logoFile instanceof File) {
-            // It is required that at least one field changes if you are using doctrine
-            // otherwise the event listeners won't be called and the file is lost
-            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
-        }
     }
 
     public function setMemoPlaceholder(?string $memoPlaceholder): void
@@ -917,12 +887,6 @@ class Configuration
     public function setMemoPlaceholderFile(?File $memoPlaceholderFile = null): void
     {
         $this->memoPlaceholderFile = $memoPlaceholderFile;
-
-        if ($memoPlaceholderFile instanceof File) {
-            // It is required that at least one field changes if you are using doctrine
-            // otherwise the event listeners won't be called and the file is lost
-            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
-        }
     }
 
     public function setMoviePlaceholder(?string $moviePlaceholder): void
@@ -933,12 +897,6 @@ class Configuration
     public function setMoviePlaceholderFile(?File $moviePlaceholderFile = null): void
     {
         $this->moviePlaceholderFile = $moviePlaceholderFile;
-
-        if ($moviePlaceholderFile instanceof File) {
-            // It is required that at least one field changes if you are using doctrine
-            // otherwise the event listeners won't be called and the file is lost
-            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
-        }
     }
 
     public function setName(string $name): static
@@ -963,12 +921,6 @@ class Configuration
     public function setPagePlaceholderFile(?File $pagePlaceholderFile = null): void
     {
         $this->pagePlaceholderFile = $pagePlaceholderFile;
-
-        if ($pagePlaceholderFile instanceof File) {
-            // It is required that at least one field changes if you are using doctrine
-            // otherwise the event listeners won't be called and the file is lost
-            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
-        }
     }
 
     public function setPersonPlaceholder(?string $personPlaceholder): void
@@ -979,12 +931,6 @@ class Configuration
     public function setPersonPlaceholderFile(?File $personPlaceholderFile = null): void
     {
         $this->personPlaceholderFile = $personPlaceholderFile;
-
-        if ($personPlaceholderFile instanceof File) {
-            // It is required that at least one field changes if you are using doctrine
-            // otherwise the event listeners won't be called and the file is lost
-            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
-        }
     }
 
     public function setPlaceholder(?string $placeholder): void
@@ -995,12 +941,6 @@ class Configuration
     public function setPlaceholderFile(?File $placeholderFile = null): void
     {
         $this->placeholderFile = $placeholderFile;
-
-        if ($placeholderFile instanceof File) {
-            // It is required that at least one field changes if you are using doctrine
-            // otherwise the event listeners won't be called and the file is lost
-            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
-        }
     }
 
     public function setPostPlaceholder(?string $postPlaceholder): void
@@ -1011,12 +951,6 @@ class Configuration
     public function setPostPlaceholderFile(?File $postPlaceholderFile = null): void
     {
         $this->postPlaceholderFile = $postPlaceholderFile;
-
-        if ($postPlaceholderFile instanceof File) {
-            // It is required that at least one field changes if you are using doctrine
-            // otherwise the event listeners won't be called and the file is lost
-            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
-        }
     }
 
     public function setRegionTmdb(?string $regionTmdb): static
@@ -1034,12 +968,6 @@ class Configuration
     public function setSagaPlaceholderFile(?File $sagaPlaceholderFile = null): void
     {
         $this->sagaPlaceholderFile = $sagaPlaceholderFile;
-
-        if ($sagaPlaceholderFile instanceof File) {
-            // It is required that at least one field changes if you are using doctrine
-            // otherwise the event listeners won't be called and the file is lost
-            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
-        }
     }
 
     public function setSeasonPlaceholder(?string $seasonPlaceholder): void
@@ -1050,12 +978,6 @@ class Configuration
     public function setSeasonPlaceholderFile(?File $seasonPlaceholderFile = null): void
     {
         $this->seasonPlaceholderFile = $seasonPlaceholderFile;
-
-        if ($seasonPlaceholderFile instanceof File) {
-            // It is required that at least one field changes if you are using doctrine
-            // otherwise the event listeners won't be called and the file is lost
-            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
-        }
     }
 
     public function setSeriePlaceholder(?string $seriePlaceholder): void
@@ -1066,12 +988,6 @@ class Configuration
     public function setSeriePlaceholderFile(?File $seriePlaceholderFile = null): void
     {
         $this->seriePlaceholderFile = $seriePlaceholderFile;
-
-        if ($seriePlaceholderFile instanceof File) {
-            // It is required that at least one field changes if you are using doctrine
-            // otherwise the event listeners won't be called and the file is lost
-            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
-        }
     }
 
     public function setSitemapPosts(bool $sitemapPosts): static
@@ -1096,12 +1012,6 @@ class Configuration
     public function setStarPlaceholderFile(?File $starPlaceholderFile = null): void
     {
         $this->starPlaceholderFile = $starPlaceholderFile;
-
-        if ($starPlaceholderFile instanceof File) {
-            // It is required that at least one field changes if you are using doctrine
-            // otherwise the event listeners won't be called and the file is lost
-            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
-        }
     }
 
     public function setStoryPlaceholder(?string $storyPlaceholder): void
@@ -1112,12 +1022,6 @@ class Configuration
     public function setStoryPlaceholderFile(?File $storyPlaceholderFile = null): void
     {
         $this->storyPlaceholderFile = $storyPlaceholderFile;
-
-        if ($storyPlaceholderFile instanceof File) {
-            // It is required that at least one field changes if you are using doctrine
-            // otherwise the event listeners won't be called and the file is lost
-            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
-        }
     }
 
     public function setTabIconSrc(?string $tabIconSrc): static
@@ -1373,12 +1277,6 @@ class Configuration
     public function setUserPlaceholderFile(?File $userPlaceholderFile = null): void
     {
         $this->userPlaceholderFile = $userPlaceholderFile;
-
-        if ($userPlaceholderFile instanceof File) {
-            // It is required that at least one field changes if you are using doctrine
-            // otherwise the event listeners won't be called and the file is lost
-            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
-        }
     }
 
     public function setUserShow(bool $userShow): static

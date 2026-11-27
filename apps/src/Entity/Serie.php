@@ -90,8 +90,7 @@ class Serie implements Stringable, EntityWithParagraphsInterface
     #[ORM\Column(name: 'lastrelease_date', type: Types::DATE_MUTABLE, nullable: true)]
     protected ?DateTime $lastreleaseDate = null;
 
-    #[ORM\OneToOne(inversedBy: 'serie', cascade: ['persist', 'remove'], orphanRemoval: true)]
-    #[ORM\JoinColumn(nullable: true)]
+    #[ORM\OneToOne(inversedBy: 'serie', cascade: ['persist', 'remove'], orphanRemoval: true, fetch: 'LAZY')]
     protected ?Meta $meta = null;
 
     /**
@@ -430,21 +429,11 @@ class Serie implements Stringable, EntityWithParagraphsInterface
     public function setBackdrop(?string $backdrop): void
     {
         $this->backdrop = $backdrop;
-
-        if (null === $backdrop) {
-            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
-        }
     }
 
     public function setBackdropFile(?File $backdropFile = null): void
     {
         $this->backdropFile = $backdropFile;
-
-        if ($backdropFile instanceof File) {
-            // It is required that at least one field changes if you are using doctrine
-            // otherwise the event listeners won't be called and the file is lost
-            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
-        }
     }
 
     public function setCasting(?array $casting): static
@@ -537,21 +526,11 @@ class Serie implements Stringable, EntityWithParagraphsInterface
     public function setPoster(?string $poster): void
     {
         $this->poster = $poster;
-
-        if (null === $poster) {
-            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
-        }
     }
 
     public function setPosterFile(?File $posterFile = null): void
     {
         $this->posterFile = $posterFile;
-
-        if ($posterFile instanceof File) {
-            // It is required that at least one field changes if you are using doctrine
-            // otherwise the event listeners won't be called and the file is lost
-            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
-        }
     }
 
     public function setReleaseDate(?DateTime $releaseDate): static

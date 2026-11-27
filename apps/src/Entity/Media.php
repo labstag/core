@@ -76,12 +76,6 @@ class Media
     public function setFile(?File $file): void
     {
         $this->file = $file;
-
-        if ($file instanceof File) {
-            // It is required that at least one field changes if you are using doctrine
-            // otherwise the event listeners won't be called and the file is lost
-            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
-        }
     }
 
     public function setMimeType(?string $mimeType): void
@@ -92,10 +86,6 @@ class Media
     public function setName(?string $name): void
     {
         $this->name = $name;
-
-        if (null === $name) {
-            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
-        }
     }
 
     public function setSize(?int $size): void
