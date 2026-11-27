@@ -164,17 +164,13 @@ class EpisodeService
      */
     private function updateImage(Episode $episode, array $details): bool
     {
-        $entityRepository = $this->entityManager->getRepository(Episode::class);
         $poster = $this->theMovieDbApi->images()->getStillUrl($details['tmdb']['still_path'] ?? '');
         if (is_null($poster)) {
-            $episode->setImgFile();
-            $episode->setImg(null);
-
-            $entityRepository->save($episode);
             return false;
         }
 
         $this->fileUploadService->setUploadedFile($poster, $episode, 'imgFile');
+        $entityRepository = $this->entityManager->getRepository(Episode::class);
         $entityRepository->save($episode);
 
         return true;

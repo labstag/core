@@ -9,6 +9,7 @@ use Labstag\Repository\SagaRepository;
 use Labstag\Service\File\FileUploadService;
 use Labstag\Service\MessageDispatcherService;
 use Psr\Log\LoggerInterface;
+use Doctrine\ORM\EntityManagerInterface;
 
 class SagaService
 {
@@ -16,6 +17,7 @@ class SagaService
         private LoggerInterface $logger,
         private MessageDispatcherService $messageDispatcherService,
         private SagaRepository $sagaRepository,
+        private EntityManagerInterface $entityManager,
         private FileUploadService $fileUploadService,
         private TheMovieDbApi $theMovieDbApi,
     )
@@ -90,13 +92,13 @@ class SagaService
     {
         $backdrop = $this->theMovieDbApi->images()->getBackdropUrl($data['tmdb']['backdrop_path'] ?? '');
         if (is_null($backdrop)) {
-            $saga->setBackdropFile();
-            $saga->setBackdrop(null);
 
             return false;
         }
 
         $this->fileUploadService->setUploadedFile($backdrop, $saga, 'backdropFile');
+        $entityRepository = $this->entityManager->getRepository(Saga::class);
+        $entityRepository->save($saga);
 
         return true;
     }
@@ -105,13 +107,13 @@ class SagaService
     {
         $poster = $this->theMovieDbApi->images()->getPosterUrl($data['tmdb']['poster_path'] ?? '');
         if (is_null($poster)) {
-            $saga->setPosterFile();
-            $saga->setPoster(null);
 
             return false;
         }
 
         $this->fileUploadService->setUploadedFile($poster, $saga, 'posterFile');
+        $entityRepository = $this->entityManager->getRepository(Saga::class);
+        $entityRepository->save($saga);
 
         return true;
     }

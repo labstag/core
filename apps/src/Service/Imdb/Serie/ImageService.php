@@ -21,17 +21,14 @@ class ImageService
 
     public function updateImageBackdrop(Serie $serie, array $details): bool
     {
-        $entityRepository = $this->entityManager->getRepository(Serie::class);
         $backdrop = $this->theMovieDbApi->images()->getBackdropUrl($details['tmdb']['backdrop_path'] ?? '');
         if (is_null($backdrop)) {
-            $serie->setBackdropFile();
-            $serie->setBackdrop(null);
-            $entityRepository->save($serie);
 
             return false;
         }
 
         $this->fileUploadService->setUploadedFile($backdrop, $serie, 'backdropFile');
+        $entityRepository = $this->entityManager->getRepository(Serie::class);
         $entityRepository->save($serie);
 
         return true;
@@ -39,17 +36,14 @@ class ImageService
 
     public function updateImagePoster(Serie $serie, array $details): bool
     {
-        $entityRepository = $this->entityManager->getRepository(Serie::class);
         $poster = $this->theMovieDbApi->images()->getPosterUrl($details['tmdb']['poster_path'] ?? '');
         if (is_null($poster)) {
-            $serie->setPosterFile();
-            $serie->setPoster(null);
-            $entityRepository->save($serie);
 
             return false;
         }
 
         $this->fileUploadService->setUploadedFile($poster, $serie, 'posterFile');
+        $entityRepository = $this->entityManager->getRepository(Serie::class);
         $entityRepository->save($serie);
 
         return true;

@@ -213,16 +213,13 @@ class SeasonService
      */
     private function updateImagePoster(Season $season, array $details): bool
     {
-        $entityRepository = $this->entityManager->getRepository(Season::class);
         $poster = $this->theMovieDbApi->images()->getPosterUrl($details['tmdb']['poster_path'] ?? '');
         if (is_null($poster)) {
-            $season->setPosterFile();
-            $season->setPoster(null);
-            $entityRepository->save($season);
             return false;
         }
 
         $this->fileUploadService->setUploadedFile($poster, $season, 'posterFile');
+        $entityRepository = $this->entityManager->getRepository(Season::class);
         $entityRepository->save($season);
 
         return true;
