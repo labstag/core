@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Labstag\Service\File;
 
-use DateTimeInterface;
 use DateTime;
+use DateTimeInterface;
 use Essence\Essence;
 use Essence\Media;
 use Exception;

@@ -2,6 +2,7 @@
 
 namespace Labstag\Service\Imdb;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Labstag\Api\TheMovieDbApi;
 use Labstag\Entity\Company;
 use Labstag\Message\CompanyMessage;
@@ -14,6 +15,7 @@ class CompanyService
 {
     public function __construct(
         private LoggerInterface $logger,
+        private EntityManagerInterface $entityManager,
         private MessageDispatcherService $messageDispatcherService,
         private CompanyRepository $companyRepository,
         private FileUploadService $fileUploadService,
@@ -70,17 +72,12 @@ class CompanyService
     {
         $poster = $this->theMovieDbApi->images()->getLogoUrl($data['tmdb']['logo_path'] ?? '');
         if (is_null($poster)) {
-            $company->setImgFile();
-            $company->setImg(null);
-
-            return false;
-        }
-
-        if ('' !== (string) $company->getImg()) {
             return false;
         }
 
         $this->fileUploadService->setUploadedFile($poster, $company, 'imgFile');
+        $entityRepository = $this->entityManager->getRepository(Company::class);
+        $entityRepository->save($company);
 
         return true;
     }

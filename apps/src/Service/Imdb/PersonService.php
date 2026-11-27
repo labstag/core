@@ -66,13 +66,12 @@ class PersonService
     {
         $poster = $this->theMovieDbApi->images()->getProfileUrl($details['tmdb']['profile_path'] ?? '');
         if (is_null($poster)) {
-            $person->setProfileFile();
-            $person->setProfile(null);
-
             return false;
         }
 
         $this->fileUploadService->setUploadedFile($poster, $person, 'profileFile');
+        $entityRepository = $this->entityManager->getRepository(Person::class);
+        $entityRepository->save($person);
 
         return true;
     }

@@ -136,6 +136,8 @@ class GameUpdateService
 
         $imageUrl = $this->igdbApi->buildImageUrl($data['cover']['image_id'], 'original');
         $this->fileService->setUploadedFile($imageUrl, $game, 'imgFile');
+        $entityRepository = $this->entityManager->getRepository(Game::class);
+        $entityRepository->save($game);
 
         return true;
     }
