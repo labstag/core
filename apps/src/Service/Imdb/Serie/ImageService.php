@@ -20,6 +20,13 @@ class ImageService
     public function updateImageBackdrop(Serie $serie, array $details): bool
     {
         $backdrop = $this->theMovieDbApi->images()->getBackdropUrl($details['tmdb']['backdrop_path'] ?? '');
+        if (is_null($backdrop)) {
+            $serie->setBackdropFile();
+            $serie->setBackdrop(null);
+
+            return false;
+        }
+
         $this->fileUploadService->setUploadedFile($backdrop, $serie, 'backdropFile');
 
         return true;
@@ -28,6 +35,13 @@ class ImageService
     public function updateImagePoster(Serie $serie, array $details): bool
     {
         $poster = $this->theMovieDbApi->images()->getPosterUrl($details['tmdb']['poster_path'] ?? '');
+        if (is_null($poster)) {
+            $serie->setPosterFile();
+            $serie->setPoster(null);
+
+            return false;
+        }
+
         $this->fileUploadService->setUploadedFile($poster, $serie, 'posterFile');
 
         return true;
