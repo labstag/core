@@ -21,7 +21,6 @@ class ImageService
     {
         $backdrop = $this->theMovieDbApi->images()->getBackdropUrl($details['tmdb']['backdrop_path'] ?? '');
         if (is_null($backdrop)) {
-
             return false;
         }
 
@@ -34,7 +33,6 @@ class ImageService
     {
         $poster = $this->theMovieDbApi->images()->getPosterUrl($details['tmdb']['poster_path'] ?? '');
         if (is_null($poster)) {
-
             return false;
         }
 
