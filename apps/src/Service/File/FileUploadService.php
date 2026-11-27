@@ -179,8 +179,6 @@ class FileUploadService
                 $filePath = $tempPath;
             }
 
-            $this->messageDispatcherService->dispatch(new FileDeleteMessage($filePath), [new DelayStamp(120_000)], true);
-
             $uploadedFile = new UploadedFile(
                 path: $filePath,
                 originalName: basename($filePath),
@@ -194,6 +192,8 @@ class FileUploadService
             }
 
             $this->uploadHandler->upload($entity, $type instanceof PropertyPathInterface ? (string) $type : $type);
+
+            $this->messageDispatcherService->dispatch(new FileDeleteMessage($filePath), [new DelayStamp(120_000)], true);
         } catch (Exception $exception) {
             $this->logger->error('Error setting uploaded file: ' . $exception->getMessage());
             throw new Exception(
