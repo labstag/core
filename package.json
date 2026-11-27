@@ -1,6 +1,6 @@
 {
   "name": "@labstag/core",
-  "version": "1.12.6",
+  "version": "1.12.7",
   "description": "Labstag in Symfony 7.1",
   "main": "index.js",
   "scripts": {
