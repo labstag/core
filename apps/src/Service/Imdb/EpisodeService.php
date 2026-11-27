@@ -170,8 +170,6 @@ class EpisodeService
         }
 
         $this->fileUploadService->setUploadedFile($poster, $episode, 'imgFile');
-        $entityRepository = $this->entityManager->getRepository(Episode::class);
-        $entityRepository->save($episode);
 
         return true;
     }

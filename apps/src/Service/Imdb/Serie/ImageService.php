@@ -27,8 +27,6 @@ class ImageService
         }
 
         $this->fileUploadService->setUploadedFile($backdrop, $serie, 'backdropFile');
-        $entityRepository = $this->entityManager->getRepository(Serie::class);
-        $entityRepository->save($serie);
 
         return true;
     }
@@ -41,8 +39,6 @@ class ImageService
         }
 
         $this->fileUploadService->setUploadedFile($poster, $serie, 'posterFile');
-        $entityRepository = $this->entityManager->getRepository(Serie::class);
-        $entityRepository->save($serie);
 
         return true;
     }

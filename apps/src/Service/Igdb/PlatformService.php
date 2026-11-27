@@ -128,8 +128,6 @@ class PlatformService extends AbstractIgdb
 
         $imageUrl = $this->igdbApi->buildImageUrl($data['platform_logo']['image_id'], 'original');
         $this->fileService->setUploadedFile($imageUrl, $platform, 'imgFile');
-        $entityRepository = $this->entityManager->getRepository(Platform::class);
-        $entityRepository->save($platform);
 
         return true;
     }

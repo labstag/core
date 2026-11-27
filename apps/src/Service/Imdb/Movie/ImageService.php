@@ -27,8 +27,6 @@ class ImageService
         }
 
         $this->fileUploadService->setUploadedFile($backdrop, $movie, 'backdropFile');
-        $entityRepository = $this->entityManager->getRepository(Movie::class);
-        $entityRepository->save($movie);
 
         return true;
     }
@@ -41,8 +39,6 @@ class ImageService
         }
 
         $this->fileUploadService->setUploadedFile($poster, $movie, 'posterFile');
-        $entityRepository = $this->entityManager->getRepository(Movie::class);
-        $entityRepository->save($movie);
 
         return true;
     }
