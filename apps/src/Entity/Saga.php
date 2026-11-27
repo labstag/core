@@ -49,8 +49,7 @@ class Saga implements Stringable, EntityWithParagraphsInterface
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
     protected ?string $id = null;
 
-    #[ORM\OneToOne(inversedBy: 'saga', cascade: ['persist', 'remove'], orphanRemoval: true)]
-    #[ORM\JoinColumn(nullable: true)]
+    #[ORM\OneToOne(inversedBy: 'saga', cascade: ['persist', 'remove'], orphanRemoval: true, fetch: 'LAZY')]
     protected ?Meta $meta = null;
 
     /**
@@ -228,21 +227,11 @@ class Saga implements Stringable, EntityWithParagraphsInterface
     public function setBackdrop(?string $backdrop): void
     {
         $this->backdrop = $backdrop;
-
-        if (null === $backdrop) {
-            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
-        }
     }
 
     public function setBackdropFile(?File $backdropFile = null): void
     {
         $this->backdropFile = $backdropFile;
-
-        if ($backdropFile instanceof File) {
-            // It is required that at least one field changes if you are using doctrine
-            // otherwise the event listeners won't be called and the file is lost
-            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
-        }
     }
 
     public function setDescription(?string $description): static
@@ -269,21 +258,11 @@ class Saga implements Stringable, EntityWithParagraphsInterface
     public function setPoster(?string $poster): void
     {
         $this->poster = $poster;
-
-        if (null === $poster) {
-            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
-        }
     }
 
     public function setPosterFile(?File $posterFile = null): void
     {
         $this->posterFile = $posterFile;
-
-        if ($posterFile instanceof File) {
-            // It is required that at least one field changes if you are using doctrine
-            // otherwise the event listeners won't be called and the file is lost
-            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
-        }
     }
 
     public function setSlug(?string $slug): static

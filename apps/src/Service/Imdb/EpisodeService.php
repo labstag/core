@@ -165,13 +165,6 @@ class EpisodeService
     private function updateImage(Episode $episode, array $details): bool
     {
         $poster = $this->theMovieDbApi->images()->getStillUrl($details['tmdb']['still_path'] ?? '');
-        if (is_null($poster)) {
-            $episode->setImgFile();
-            $episode->setImg(null);
-
-            return false;
-        }
-
         $this->fileUploadService->setUploadedFile($poster, $episode, 'imgFile');
 
         return true;

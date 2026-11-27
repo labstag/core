@@ -89,13 +89,6 @@ class SagaService
     private function updateImageBackdrop(Saga $saga, array $data): bool
     {
         $backdrop = $this->theMovieDbApi->images()->getBackdropUrl($data['tmdb']['backdrop_path'] ?? '');
-        if (is_null($backdrop)) {
-            $saga->setBackdropFile();
-            $saga->setBackdrop(null);
-
-            return false;
-        }
-
         $this->fileUploadService->setUploadedFile($backdrop, $saga, 'backdropFile');
 
         return true;
@@ -104,13 +97,6 @@ class SagaService
     private function updateImagePoster(Saga $saga, array $data): bool
     {
         $poster = $this->theMovieDbApi->images()->getPosterUrl($data['tmdb']['poster_path'] ?? '');
-        if (is_null($poster)) {
-            $saga->setPosterFile();
-            $saga->setPoster(null);
-
-            return false;
-        }
-
         $this->fileUploadService->setUploadedFile($poster, $saga, 'posterFile');
 
         return true;

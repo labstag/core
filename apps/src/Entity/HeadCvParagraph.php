@@ -40,21 +40,11 @@ class HeadCvParagraph extends Paragraph
     public function setPdf(?string $pdf): void
     {
         $this->pdf = $pdf;
-
-        if (null === $pdf) {
-            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
-        }
     }
 
     public function setPdfFile(?File $pdfFile = null): void
     {
         $this->pdfFile = $pdfFile;
-
-        if ($pdfFile instanceof File) {
-            // It is required that at least one field changes if you are using doctrine
-            // otherwise the event listeners won't be called and the file is lost
-            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
-        }
     }
 
     public function setTitle(?string $title): static
