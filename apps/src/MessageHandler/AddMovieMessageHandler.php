@@ -24,14 +24,9 @@ final class AddMovieMessageHandler
         $data = $addMovieMessage->getData();
 
         $imdb  = trim((string) ($data['ID IMDb'] ?? ''));
-        $imdb  = '' === $imdb ? null : $imdb;
-
-        $movie = null;
-        if (null !== $imdb) {
-            $movie = $this->movieRepository->findOneBy(
-                ['imdb' => $imdb]
-            );
-        }
+        $movie = $this->movieRepository->findOneBy(
+            ['imdb' => $imdb]
+        );
 
         if ($movie instanceof Movie) {
             $movie->setFile(true);
