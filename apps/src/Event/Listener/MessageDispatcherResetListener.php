@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Labstag\EventListener;
+namespace Labstag\Event\Listener;
 
 use Labstag\Service\MessageDispatcherService;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;

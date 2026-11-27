@@ -1,6 +1,6 @@
 <?php
 
-namespace Labstag\EventSubscriber;
+namespace Labstag\Event\Subscriber;
 
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
