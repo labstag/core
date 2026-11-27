@@ -125,7 +125,7 @@ class SeasonService
         $statuses = [
             $this->updateSeason($season, $details),
             $this->updateImagePoster($season, $details),
-            $this->updateImageBackdrop($season, $details),
+            $this->updateImageBackdrop($season),
             $this->updateCredits(),
             $this->updateEpisodes($season, $details),
         ];
@@ -181,7 +181,7 @@ class SeasonService
         return true;
     }
 
-    private function updateImageBackdrop(Season $season, array $details): bool
+    private function updateImageBackdrop(Season $season): bool
     {
         $images = [];
         foreach ($season->getEpisodes() as $episode) {
