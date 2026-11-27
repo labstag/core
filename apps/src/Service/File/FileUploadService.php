@@ -153,10 +153,10 @@ class FileUploadService
         return $this->saveCanvas($final, $jpegQuality);
     }
 
-    public function setUploadedFile(string $filePath, object $entity, string|PropertyPathInterface $type): void
+    public function setUploadedFile(?string $filePath, object $entity, string|PropertyPathInterface $type): void
     {
         $propertyAccessor = PropertyAccess::createPropertyAccessor();
-        if ('' === $filePath) {
+        if (null === $filePath || '' === $filePath) {
             $propertyAccessor->setValue($entity, $type, null);
             return;
         }

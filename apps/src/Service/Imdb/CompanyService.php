@@ -69,6 +69,17 @@ class CompanyService
     private function updateImageCompany(Company $company, array $data): bool
     {
         $poster = $this->theMovieDbApi->images()->getLogoUrl($data['tmdb']['logo_path'] ?? '');
+        if (is_null($poster)) {
+            $company->setImgFile();
+            $company->setImg(null);
+
+            return false;
+        }
+
+        if ('' !== (string) $company->getImg()) {
+            return false;
+        }
+
         $this->fileUploadService->setUploadedFile($poster, $company, 'imgFile');
 
         return true;
